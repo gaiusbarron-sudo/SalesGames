@@ -107,3 +107,77 @@ test('deepgram provider relays audio and maps results', async (t) => {
   assert.ok(received.closeStream, 'expected CloseStream on stop');
   ws.close();
 });
+
+test('aws provider opens a stream on audio, maps results, and closes it when idle', async (t) => {
+  const aws = require('../providers/aws');
+  const streams = [];
+  const original = { createClient: aws.createClient, idleCloseMs: aws.idleCloseMs };
+  aws.idleCloseMs = 150;
+  aws.createClient = () => ({
+    client: { config: { credentials: async () => ({}) }, destroy() {} },
+    async startStream(input) {
+      const record = { input, chunks: 0, ended: false };
+      streams.push(record);
+      return {
+        TranscriptResultStream: (async function* () {
+          for await (const ev of input.AudioStream) {
+            record.chunks += 1;
+            if (record.chunks === 1) {
+              yield { TranscriptEvent: { Transcript: { Results: [{ IsPartial: true, Alternatives: [{ Transcript: 'my member' }] }] } } };
+              yield { TranscriptEvent: { Transcript: { Results: [{ IsPartial: false, Alternatives: [{ Transcript: 'My member ID is ready.' }] }] } } };
+            }
+          }
+          record.ended = true;
+        })(),
+      };
+    },
+  });
+  t.after(() => Object.assign(aws, original));
+
+  const captions = [];
+  const errors = [];
+  const session = await aws.createSession({
+    sampleRate: 16000,
+    onCaption: (c) => captions.push(c),
+    onError: (e) => errors.push(e),
+    onClose: () => {},
+  });
+
+  assert.strictEqual(streams.length, 0, 'no stream before audio arrives');
+  session.sendAudio(Buffer.alloc(3200));
+  session.sendAudio(Buffer.alloc(3200));
+  await new Promise((r) => setTimeout(r, 50));
+  assert.strictEqual(streams.length, 1);
+  assert.strictEqual(streams[0].input.MediaSampleRateHertz, 16000);
+  assert.strictEqual(streams[0].input.MediaEncoding, 'pcm');
+  assert.deepStrictEqual(captions, [
+    { text: 'my member', isFinal: false },
+    { text: 'My member ID is ready.', isFinal: true },
+  ]);
+
+  await new Promise((r) => setTimeout(r, 300));
+  assert.ok(streams[0].ended, 'stream closes after silence');
+  assert.strictEqual(streams[0].chunks, 2);
+
+  session.sendAudio(Buffer.alloc(3200));
+  await new Promise((r) => setTimeout(r, 50));
+  assert.strictEqual(streams.length, 2, 'new stream when audio resumes');
+  session.close();
+  await new Promise((r) => setTimeout(r, 50));
+  assert.ok(streams[1].ended);
+  assert.deepStrictEqual(errors, []);
+});
+
+test('aws provider reports missing credentials on start', async (t) => {
+  const aws = require('../providers/aws');
+  const original = aws.createClient;
+  aws.createClient = () => ({
+    client: { config: { credentials: async () => { throw new Error('Could not load credentials from any providers'); } }, destroy() {} },
+    startStream: async () => assert.fail('should not stream'),
+  });
+  t.after(() => (aws.createClient = original));
+  await assert.rejects(
+    aws.createSession({ sampleRate: 16000, onCaption() {}, onError() {}, onClose() {} }),
+    /AWS credentials not found/
+  );
+});

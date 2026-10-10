@@ -40,14 +40,66 @@ Open http://127.0.0.1:8787 in Chrome or Edge, choose **Microphone (testing
 only)**, and press **Start captions**. In demo mode, scripted captions appear
 while audio is flowing.
 
-For real captions:
+## Set up Amazon Transcribe
+
+One-time setup in the AWS console, done by whoever manages your AWS account:
+
+1. **Accept the AWS BAA.** In **AWS Artifact → Agreements**, accept the
+   Business Associate Addendum for the account (or your whole AWS Organization).
+   Amazon Transcribe is a HIPAA-eligible service under it. Do this before
+   sending any real member calls.
+2. **Opt out of AI training.** In **AWS Organizations → Policies → AI services
+   opt-out policies**, attach `aws/ai-opt-out-policy.json` so AWS doesn't keep
+   or use your call audio to improve its models. (Use the `default` service key
+   instead of `transcribe` to opt out of every AWS AI service.)
+3. **Create a least-privilege identity.** In **IAM**, create a policy from
+   `aws/iam-policy.json`. It allows starting live transcription and nothing
+   else. Attach it to:
+   - an **IAM role**, if the caption server runs on AWS (EC2, ECS), or
+   - an **IAM user** with an access key, if it runs on an office machine.
+4. **Pick a region** close to your agents (for example `us-east-1` or
+   `us-west-2`).
+
+Then configure the server:
 
 ```bash
 cp .env.example .env
-# set CAPTION_PROVIDER=deepgram and DEEPGRAM_API_KEY=...
-#  or CAPTION_PROVIDER=aws plus AWS credentials and AWS_REGION
-npm start
 ```
+
+```ini
+CAPTION_PROVIDER=aws
+AWS_REGION=us-east-1
+# Only when not using an IAM role:
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+```
+
+Run `npm start`. The status pill should say **Listening** (not "demo
+captions"). If credentials are missing or wrong, the window shows the error as
+soon as you press Start.
+
+### Where to run the server
+
+- **One shared server (recommended).** Run it on one machine (an office server
+  or a small EC2 instance with an IAM role), so the AWS key never sits on agent
+  PCs. Browsers only allow audio capture on secure pages, so serve it over
+  **HTTPS** (for example behind your existing reverse proxy or an AWS load
+  balancer), keep it on your internal network or VPN, and set `HOST=0.0.0.0`
+  and an `ACCESS_TOKEN`.
+- **One per agent PC.** Works with plain `http://127.0.0.1:8787` and no HTTPS
+  setup, but every PC needs Node.js and a copy of the AWS key. Fine for a pilot
+  with a few agents.
+
+### Cost
+
+Transcribe bills per second of audio streamed (check the
+[pricing page](https://aws.amazon.com/transcribe/pricing/) for your region).
+To keep that to talk time, the caption window doesn't send audio during
+silence: it starts sending when someone speaks, keeps going two seconds after
+they stop, and includes a fraction of a second from just before speech so first
+words aren't cut off. The server opens a Transcribe stream when speech starts
+and closes it after eight quiet seconds. Agents can leave captions on all shift
+without paying for the gaps between calls. Hold music still counts as sound.
 
 ## Using it with Ringy
 
@@ -104,9 +156,9 @@ Captions of member calls contain PHI. Before going live:
   never logs transcript text. The window keeps the transcript until the agent
   clears it or closes the window. When agents paste it into a case, your normal
   record-retention rules apply.
-- Deepgram requests opt out of its model-improvement program (`mip_opt_out`).
-  For AWS, use an AWS Organizations AI services opt-out policy so your audio
-  isn't used to improve AWS models.
+- **Opt out of AI training.** For AWS, attach the AI services opt-out policy
+  (step 2 above). Deepgram requests already opt out of its model-improvement
+  program (`mip_opt_out`).
 
 ## Settings
 
@@ -126,9 +178,10 @@ Captions of member calls contain PHI. Before going live:
 npm test
 ```
 
-The tests run the server with the demo provider, and run the Deepgram adapter
-against a local fake Deepgram server. The AWS adapter has no automated test;
-try it with a real AWS account before rollout.
+The tests run the server with the demo provider, the Deepgram adapter against
+a local fake Deepgram server, and the AWS adapter against a fake Transcribe
+client (stream opens on audio, closes when idle, results map to captions).
+Do a short test call against real Transcribe before rollout.
 
 ## Where this can go next
 

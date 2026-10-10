@@ -112,6 +112,35 @@
     return media;
   }
 
+  // Passes audio through while there is sound, plus a short tail, and holds it
+  // back during silence (between calls, hold music aside) so the speech service
+  // only bills for audio worth captioning. A little audio from just before the
+  // sound starts is sent too, so first words aren't clipped.
+  function silenceGate(send) {
+    const THRESHOLD = 100; // RMS of 16-bit samples, about -50 dBFS
+    const TAIL_MS = 2000;
+    const PREROLL_CHUNKS = 3;
+    const preroll = [];
+    let lastSound = 0;
+    return (buffer) => {
+      const samples = new Int16Array(buffer);
+      let sum = 0;
+      for (let i = 0; i < samples.length; i++) sum += samples[i] * samples[i];
+      const rms = Math.sqrt(sum / samples.length);
+      const now = Date.now();
+      if (rms > THRESHOLD) {
+        if (now - lastSound > TAIL_MS) preroll.splice(0).forEach(send);
+        lastSound = now;
+      }
+      if (now - lastSound <= TAIL_MS) {
+        send(buffer);
+      } else {
+        preroll.push(buffer);
+        if (preroll.length > PREROLL_CHUNKS) preroll.shift();
+      }
+    };
+  }
+
   function socketUrl() {
     const url = new URL('captions', location.href);
     url.protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -187,9 +216,10 @@
       toast(event.code === 1006 ? 'Lost connection to the caption server.' : event.reason || 'Connection closed.', 7000);
       stop(true);
     };
-    capture.port.onmessage = (event) => {
-      if (ws && ws.readyState === WebSocket.OPEN) ws.send(event.data);
-    };
+    const gate = silenceGate((chunk) => {
+      if (ws && ws.readyState === WebSocket.OPEN) ws.send(chunk);
+    });
+    capture.port.onmessage = (event) => gate(event.data);
 
     startedAt = Date.now();
     tick();
