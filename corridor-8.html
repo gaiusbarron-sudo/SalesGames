@@ -126,7 +126,7 @@ kbd { font-family: var(--f-sign); font-size: 12px; border: 1px solid #44474b; bo
       <dt>Pause</dt><dd><kbd>Esc</kbd></dd>
     </dl>
     <button class="btn" id="startBtn" type="button" disabled>Loading the passage…</button>
-    <span class="loading">Sound on is better. Count your exit number on the yellow signs at each corner.</span>
+    <span class="loading">Play with sound on. Some anomalies you can only hear. Learn the passage by heart, because the higher your exit number, the subtler the anomalies get. Some only happen after you walk past.</span>
   </div>
 </section>
 
@@ -163,27 +163,55 @@ const ZC = [0, C];
 const WALK = 2.4, RUN = 4.4;
 
 const ANOMALIES = [
-  { id: "man_stare",     name: "The man stopped and stared at you" },
-  { id: "man_giant",     name: "The man was enormous" },
-  { id: "man_fast",      name: "The man came running" },
-  { id: "man_back",      name: "The man walked backward" },
-  { id: "man_two",       name: "There were two men" },
-  { id: "man_none",      name: "The man never came" },
-  { id: "poster_flip",   name: "A poster was upside down" },
-  { id: "poster_same",   name: "Every poster was the dentist" },
-  { id: "poster_eyes",   name: "The dentist's eyes followed you" },
-  { id: "door_ajar",     name: "A door was left open" },
-  { id: "door_extra",    name: "There was a third door" },
-  { id: "door_opens",    name: "A door opened as you passed" },
-  { id: "lights_flicker",name: "The lights flickered" },
-  { id: "lights_red",    name: "The lights were red" },
-  { id: "lights_dark",   name: "The far half was dark" },
-  { id: "flood",         name: "A red flood came for you" },
-  { id: "vent_eyes",     name: "Something watched from the vent" },
-  { id: "alarm_big",     name: "The alarm button was huge" },
-  { id: "sign_arrow",    name: "The exit sign pointed the wrong way" },
-  { id: "low_ceiling",   name: "The ceiling was lower" },
-  { id: "handprints",    name: "Handprints on the wall" }
+  // tier 1: obvious
+  { id: "man_giant",     tier: 1, name: "The man was enormous" },
+  { id: "man_fast",      tier: 1, name: "The man came running" },
+  { id: "man_two",       tier: 1, name: "There were two men" },
+  { id: "poster_same",   tier: 1, name: "Every poster was the dentist" },
+  { id: "lights_red",    tier: 1, name: "The lights were red" },
+  { id: "lights_dark",   tier: 1, name: "The far half was dark" },
+  { id: "flood",         tier: 1, name: "A red flood came for you" },
+  { id: "alarm_big",     tier: 1, name: "The alarm button was huge" },
+  { id: "handprints",    tier: 1, name: "Handprints on the wall" },
+  // tier 2: you have to be looking
+  { id: "man_stare",     tier: 2, name: "The man stopped and stared at you" },
+  { id: "man_back",      tier: 2, name: "The man walked backward" },
+  { id: "man_none",      tier: 2, name: "The man never came" },
+  { id: "man_center",    tier: 2, name: "The man walked straight at you" },
+  { id: "poster_flip",   tier: 2, name: "A poster was upside down" },
+  { id: "poster_eyes",   tier: 2, name: "The dentist's eyes followed you" },
+  { id: "poster_color",  tier: 2, name: "The museum poster was red" },
+  { id: "door_ajar",     tier: 2, name: "A door was left open" },
+  { id: "door_extra",    tier: 2, name: "There was a third door" },
+  { id: "door_opens",    tier: 2, name: "A door opened as you passed" },
+  { id: "lights_flicker",tier: 2, name: "The lights flickered" },
+  { id: "vent_eyes",     tier: 2, name: "Something watched from the vent" },
+  { id: "sign_arrow",    tier: 2, name: "The exit sign pointed the wrong way" },
+  { id: "low_ceiling",   tier: 2, name: "The ceiling was lower" },
+  { id: "hum_stop",      tier: 2, name: "The lights stopped humming" },
+  // tier 3: subtle, or it happens behind your back
+  { id: "man_small",     tier: 3, name: "The man was a little shorter" },
+  { id: "man_nobag",     tier: 3, name: "The man had no briefcase" },
+  { id: "man_tie",       tier: 3, name: "The man's tie was yellow" },
+  { id: "man_slow",      tier: 3, name: "The man walked too slowly" },
+  { id: "man_lookback",  tier: 3, name: "The man turned to watch you leave", late: true },
+  { id: "poster_swap",   tier: 3, name: "Two posters had swapped places" },
+  { id: "poster_missing",tier: 3, name: "One poster frame was empty" },
+  { id: "poster_shift",  tier: 3, name: "A poster hung out of line" },
+  { id: "poster_tilt",   tier: 3, name: "A poster was slightly crooked" },
+  { id: "poster_text",   tier: 3, name: "The apartment was 8 minutes from the station" },
+  { id: "poster_late",   tier: 3, name: "A poster flipped after you passed it", late: true },
+  { id: "door_plate",    tier: 3, name: "A door had no Staff Only sign" },
+  { id: "door_moved",    tier: 3, name: "The second door had moved" },
+  { id: "door_behind",   tier: 3, name: "A door opened behind you", late: true },
+  { id: "vent_missing",  tier: 3, name: "The vent was gone" },
+  { id: "smoke_missing", tier: 3, name: "The no-smoking sign was gone" },
+  { id: "alarm_moved",   tier: 3, name: "The alarm button had moved" },
+  { id: "tube_out",      tier: 3, name: "One ceiling light was out" },
+  { id: "hang_missing",  tier: 3, name: "The hanging exit sign was gone" },
+  { id: "hang_word",     tier: 3, name: "The hanging sign said 入口, entrance" },
+  { id: "lights_behind", tier: 3, name: "The lights went out behind you", late: true },
+  { id: "steps_echo",    tier: 3, name: "Someone's footsteps followed yours" }
 ];
 
 const JP = '"Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif';
@@ -242,7 +270,7 @@ function arrow(g, cx, cy, size, dir) { // dir: 1 right, -1 left, 0 up
 }
 
 // ---------------------------------------------------------------- textures
-let wallTex, floorTex, ceilTex, doorTex, ventTex, alarmTex, smokeTex, handTex, posterTex = [], hangTex = {}, exitTex;
+let wallTex, floorTex, ceilTex, doorTex, doorTexBare, posterAlt = {}, ventTex, alarmTex, smokeTex, handTex, posterTex = [], hangTex = {}, exitTex;
 function buildTextures() {
   const PXM = 512 / 1.2; // pixels per metre on wall texture
   wallTex = canvasTex(512, 1280, (g, w, h) => {
@@ -282,18 +310,22 @@ function buildTextures() {
     }
   }, true);
 
-  doorTex = canvasTex(256, 540, (g, w, h) => {
+  const drawDoor = plate => (g, w, h) => {
     const gr = g.createLinearGradient(0, 0, 0, h);
     gr.addColorStop(0, "#a3a8a3"); gr.addColorStop(1, "#8d928d");
     g.fillStyle = gr; g.fillRect(0, 0, w, h);
     g.strokeStyle = "rgba(0,0,0,.18)"; g.lineWidth = 3; g.strokeRect(18, 18, w - 36, h - 36);
-    g.fillStyle = "#f4f4f0"; g.fillRect(48, 96, 160, 92);
-    g.fillStyle = "#1b1b1b"; g.textAlign = "center";
-    g.font = `900 26px ${JP}`; g.fillText("関係者以外", 128, 132); g.fillText("立入禁止", 128, 164);
-    g.font = `700 14px ${EN}`; g.fillText("STAFF ONLY", 128, 182);
+    if (plate) {
+      g.fillStyle = "#f4f4f0"; g.fillRect(48, 96, 160, 92);
+      g.fillStyle = "#1b1b1b"; g.textAlign = "center";
+      g.font = `900 26px ${JP}`; g.fillText("関係者以外", 128, 132); g.fillText("立入禁止", 128, 164);
+      g.font = `700 14px ${EN}`; g.fillText("STAFF ONLY", 128, 182);
+    }
     g.fillStyle = "#3a3c3a"; g.beginPath(); g.arc(36, 290, 11, 0, Math.PI * 2); g.fill();
     g.fillStyle = "#575a57"; g.fillRect(30, 282, 34, 16);
-  });
+  };
+  doorTex = canvasTex(256, 540, drawDoor(true));
+  doorTexBare = canvasTex(256, 540, drawDoor(false));
 
   ventTex = canvasTex(256, 96, (g, w, h) => {
     g.fillStyle = "#babdb7"; g.fillRect(0, 0, w, h);
@@ -335,6 +367,10 @@ function buildTextures() {
   });
 
   for (let i = 0; i < 6; i++) posterTex[i] = canvasTex(512, 358, (g, w, h) => drawPoster(i, g, w, h, null));
+  posterAlt.color = canvasTex(512, 358, (g, w, h) => drawPoster(0, g, w, h, null, true));
+  posterAlt.text = canvasTex(512, 358, (g, w, h) => drawPoster(5, g, w, h, null, true));
+  hangTex.word = {};
+  for (const dir of [1, -1]) hangTex.word[dir] = canvasTex(512, 128, (g, w, h) => drawHang(g, w, h, dir, "入口"));
   for (const dir of [1, -1]) hangTex[dir] = canvasTex(512, 128, (g, w, h) => drawHang(g, w, h, dir));
   hangTex.back = canvasTex(512, 128, (g, w, h) => drawHang(g, w, h, 2));
   exitTex = canvasTex(1024, 256, (g, w, h) => {
@@ -347,19 +383,19 @@ function buildTextures() {
   });
 }
 
-function drawHang(g, w, h, dir) {
+function drawHang(g, w, h, dir, word) {
   g.fillStyle = "#f2c230"; g.fillRect(0, 0, w, h);
   g.fillStyle = "#111"; g.textBaseline = "alphabetic";
-  g.font = `900 70px ${JP}`; g.fillText("出口", 34, 95);
+  g.font = `900 70px ${JP}`; g.fillText(word || "出口", 34, 95);
   g.font = `700 44px ${EN}`; g.fillText("Exit", 200, 92);
   if (dir === 1 || dir === -1) arrow(g, 430, 64, 96, dir);
 }
 
-function drawPoster(i, g, w, h, eye) {
+function drawPoster(i, g, w, h, eye, alt) {
   g.save();
   g.textBaseline = "alphabetic"; g.textAlign = "left";
   if (i === 0) {
-    g.fillStyle = "#22385a"; g.fillRect(0, 0, w, h);
+    g.fillStyle = alt ? "#5a2226" : "#22385a"; g.fillRect(0, 0, w, h);
     const gr = g.createRadialGradient(370, 150, 8, 370, 150, 150);
     gr.addColorStop(0, "#ffe9a3"); gr.addColorStop(1, "rgba(255,233,163,0)");
     g.fillStyle = gr; g.fillRect(0, 0, w, h);
@@ -412,8 +448,8 @@ function drawPoster(i, g, w, h, eye) {
     g.fillStyle = "#8399a8"; [[300, 120, 60, 200], [370, 70, 70, 250], [450, 150, 50, 170]].forEach(([x, y, bw, bh]) => g.fillRect(x, y, bw, bh));
     g.fillStyle = "#e9eef1";
     for (let x = 308; x < 500; x += 22) for (let y = 90; y < 310; y += 26) if (Math.random() < .6) g.fillRect(x, y, 8, 12);
-    g.fillStyle = "#13283a"; g.font = `900 52px ${JP}`; g.fillText("駅徒歩1分", 28, 96);
-    g.font = `700 24px ${EN}`; g.fillText("1 MIN FROM THE STATION", 30, 134);
+    g.fillStyle = "#13283a"; g.font = `900 52px ${JP}`; g.fillText(alt ? "駅徒歩8分" : "駅徒歩1分", 28, 96);
+    g.font = `700 24px ${EN}`; g.fillText(alt ? "8 MIN FROM THE STATION" : "1 MIN FROM THE STATION", 30, 134);
     g.font = `900 40px ${EN}`; g.fillText("¥88,000", 30, 250);
     g.font = `400 20px ${EN}`; g.fillText("per month · 1LDK", 32, 280);
   }
@@ -451,6 +487,7 @@ const M = {
   suit: new THREE.MeshPhongMaterial({ color: 0x2b2f36, shininess: 8 }),
   shirt: new THREE.MeshPhongMaterial({ color: 0xf2f2ee }),
   tie: new THREE.MeshPhongMaterial({ color: 0x5c1f24 }),
+  tieOdd: new THREE.MeshPhongMaterial({ color: 0xb8902a }),
   skin: new THREE.MeshPhongMaterial({ color: 0xe0b48f, shininess: 4 }),
   hair: new THREE.MeshPhongMaterial({ color: 0x23201e }),
   shoe: new THREE.MeshPhongMaterial({ color: 0x121212, shininess: 40 }),
@@ -534,7 +571,7 @@ for (const bx of [-W / 2, L + W / 2]) for (const z of [1.2, C - 1.2]) {
 }
 
 // ---------------------------------------------------------------- the man
-function makeMan() {
+function makeMan(opt = {}) {
   const g = new THREE.Group();
   const add = (geo, mat, x, y, z, parent = g) => { const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); parent.add(m); return m; };
   const legs = [], arms = [];
@@ -546,12 +583,12 @@ function makeMan() {
     const sh = new THREE.Group(); sh.position.set(0, 1.47, 0.26 * s); g.add(sh);
     add(new THREE.BoxGeometry(0.13, 0.6, 0.12), M.suit, 0, -0.3, 0, sh);
     add(new THREE.BoxGeometry(0.09, 0.1, 0.08), M.skin, 0, -0.64, 0, sh);
-    if (s === 1) add(new THREE.BoxGeometry(0.36, 0.27, 0.08), M.bag, 0, -0.84, 0.03, sh);
+    if (s === 1 && opt.bag !== false) add(new THREE.BoxGeometry(0.36, 0.27, 0.08), M.bag, 0, -0.84, 0.03, sh);
     arms.push(sh);
   }
   add(new THREE.BoxGeometry(0.25, 0.64, 0.44), M.suit, 0, 1.2, 0);
   add(new THREE.BoxGeometry(0.02, 0.36, 0.13), M.shirt, 0.125, 1.32, 0);
-  add(new THREE.BoxGeometry(0.025, 0.32, 0.05), M.tie, 0.135, 1.31, 0);
+  add(new THREE.BoxGeometry(0.025, 0.32, 0.05), opt.tie || M.tie, 0.135, 1.31, 0);
   add(new THREE.BoxGeometry(0.1, 0.08, 0.1), M.skin, 0, 1.55, 0);
   const head = new THREE.Group(); head.position.set(0, 1.68, 0); g.add(head);
   add(new THREE.SphereGeometry(0.12, 18, 14), M.skin, 0, 0, 0, head).scale.set(1, 1.12, 0.92);
@@ -588,7 +625,8 @@ function buildCorridor(cfg) {
   const tubeMat = new THREE.MeshBasicMaterial({ color: A === "lights_red" ? 0xff4a3a : 0xffffff }); own.push(tubeMat);
   const tubeOff = new THREE.MeshBasicMaterial({ color: 0x4a4c4e }); own.push(tubeOff);
   for (let x = 1.5; x < L; x += 3) {
-    const t = new THREE.Mesh(tubeGeo, (A === "lights_dark" && x > L / 2) ? tubeOff : tubeMat);
+    const out = (A === "lights_dark" && x > L / 2) || (A === "tube_out" && Math.abs(x - 19.5) < 0.1);
+    const t = new THREE.Mesh(tubeGeo, out ? tubeOff : tubeMat);
     t.position.set(x, ceilY - 0.03, 0); g.add(t); ud.tubes.push(t);
   }
   ud.tubeMat = tubeMat; ud.tubeOff = tubeOff;
@@ -607,26 +645,40 @@ function buildCorridor(cfg) {
   const left = new THREE.Group(); left.position.set(0, 0, -W / 2); g.add(left);
   const POSTER_X = [6.5, 11, 15.5, 20, 24.5, 29];
   ud.eyeTex = null;
-  POSTER_X.forEach((px, i) => {
-    let idx = A === "poster_same" ? 1 : i;
+  const order = [0, 1, 2, 3, 4, 5];
+  if (A === "poster_swap") { order[2] = 4; order[4] = 2; }
+  POSTER_X.forEach((px0, i) => {
+    let idx = A === "poster_same" ? 1 : order[i];
+    let px = px0;
+    if (A === "poster_shift" && i === 3) px += 0.45;
     let mat;
     if (A === "poster_eyes" && i === 1) {
       const t = canvasTex(512, 358, (gg, w, h) => drawPoster(1, gg, w, h, { x: 0, y: 0 })); own.push(t);
       ud.eyeTex = t; ud.eyeX = px; ud.eyeLast = "";
       mat = new THREE.MeshBasicMaterial({ map: t, color: 0xf0f0f0 });
-    } else mat = new THREE.MeshBasicMaterial({ map: posterTex[idx], color: 0xf0f0f0 });
+    } else {
+      let tex = posterTex[idx];
+      if (A === "poster_color" && idx === 0) tex = posterAlt.color;
+      if (A === "poster_text" && idx === 5) tex = posterAlt.text;
+      mat = new THREE.MeshBasicMaterial({ map: tex, color: 0xf0f0f0 });
+    }
     own.push(mat);
     const fr = mk(new THREE.BoxGeometry(1.64, 1.18, 0.05), M.frame, left); fr.position.set(px, 1.55, 0.025);
     const p = mk(new THREE.PlaneGeometry(1.5, 1.05), mat, left); p.position.set(px, 1.55, 0.052);
     if (A === "poster_flip" && i === 2) p.rotation.z = Math.PI;
+    if (A === "poster_tilt" && i === 4) { p.rotation.z = 0.06; fr.rotation.z = 0.06; }
+    if (A === "poster_missing" && i === 3) p.visible = false;
+    if (A === "poster_late" && i === 1) ud.latePoster = { mesh: p, x: px };
   });
 
   // right wall: doors, vent, alarm, signs (group rotated so children face into the corridor)
   const right = new THREE.Group(); right.position.set(0, 0, W / 2); right.rotation.y = Math.PI; g.add(right);
-  const doorMats = [M.doorEdge, M.doorEdge, M.doorEdge, M.doorEdge, new THREE.MeshPhongMaterial({ map: doorTex, shininess: 18 }), M.doorEdge];
-  own.push(doorMats[4]);
-  const doorXs = A === "door_extra" ? [9.5, 16.5, 23.5] : [9.5, 23.5];
+  const doorFront = new THREE.MeshPhongMaterial({ map: doorTex, shininess: 18 }), doorFrontBare = new THREE.MeshPhongMaterial({ map: doorTexBare, shininess: 18 });
+  own.push(doorFront, doorFrontBare);
+  const doorXs = A === "door_extra" ? [9.5, 16.5, 23.5] : A === "door_moved" ? [9.5, 26] : [9.5, 23.5];
   doorXs.forEach((dx, i) => {
+    const front = (A === "door_plate" && i === 1) ? doorFrontBare : doorFront;
+    const doorMats = [M.doorEdge, M.doorEdge, M.doorEdge, M.doorEdge, front, M.doorEdge];
     const voidm = mk(new THREE.PlaneGeometry(1.0, 2.1), M.black, right); voidm.position.set(-dx, 1.05, 0.004);
     for (const [fw, fh, fx, fy] of [[0.08, 2.2, -dx - 0.54, 1.1], [0.08, 2.2, -dx + 0.54, 1.1], [1.16, 0.08, -dx, 2.14]]) {
       const f = mk(new THREE.BoxGeometry(fw, fh, 0.06), M.frame, right); f.position.set(fx, fy, 0.03);
@@ -636,10 +688,10 @@ function buildCorridor(cfg) {
     let open = 0;
     if (A === "door_ajar" && i === 0) open = 0.45;
     pivot.rotation.y = open;
-    ud.doors.push({ pivot, x: dx, opens: A === "door_opens" && i === doorXs.length - 1 });
+    ud.doors.push({ pivot, x: dx, opens: A === "door_opens" && i === doorXs.length - 1, behind: A === "door_behind" && i === 0 });
   });
   const vx = 16.5;
-  if (A !== "door_extra") {
+  if (A !== "door_extra" && A !== "vent_missing") {
     const vent = mk(new THREE.PlaneGeometry(0.9, 0.34), new THREE.MeshPhongMaterial({ map: ventTex }), right);
     own.push(vent.material); vent.position.set(-vx, 2.5, 0.01);
     if (A === "vent_eyes") {
@@ -647,10 +699,11 @@ function buildCorridor(cfg) {
     }
   }
   const alarm = mk(new THREE.BoxGeometry(0.3, 0.4, 0.07), [M.doorEdge, M.doorEdge, M.doorEdge, M.doorEdge, new THREE.MeshPhongMaterial({ map: alarmTex }), M.doorEdge], right);
-  own.push(alarm.material[4]); alarm.position.set(-30.5, 1.2, 0.035);
+  own.push(alarm.material[4]); alarm.position.set(A === "alarm_moved" ? -28.3 : -30.5, 1.2, 0.035);
   if (A === "alarm_big") { alarm.scale.set(2.6, 2.6, 1); alarm.position.y = 1.35; }
   const smoke = mk(new THREE.PlaneGeometry(0.32, 0.375), new THREE.MeshPhongMaterial({ map: smokeTex }), right);
   own.push(smoke.material); smoke.position.set(-4, 1.65, 0.01);
+  smoke.visible = A !== "smoke_missing";
   if (A === "handprints") {
     const hp = mk(new THREE.PlaneGeometry(3.2, 1.6), new THREE.MeshBasicMaterial({ map: handTex, transparent: true }), right);
     own.push(hp.material); hp.position.set(-16.5, 1.25, 0.012);
@@ -662,19 +715,22 @@ function buildCorridor(cfg) {
   let dir = (otherDz * heading) > 0 ? 1 : -1;          // right of +x is +z
   if (A === "sign_arrow") dir = -dir;
   const hang = new THREE.Group(); hang.position.set(L - 7, ceilY - 0.42, 0); g.add(hang);
-  const signFront = new THREE.MeshBasicMaterial({ map: hangTex[dir] }), signBack = new THREE.MeshBasicMaterial({ map: hangTex.back });
+  const signFront = new THREE.MeshBasicMaterial({ map: A === "hang_word" ? hangTex.word[dir] : hangTex[dir] }), signBack = new THREE.MeshBasicMaterial({ map: hangTex.back });
   own.push(signFront, signBack);
   mk(new THREE.BoxGeometry(0.06, 0.4, 1.6), [signBack, signFront, M.frame, M.frame, M.frame, M.frame], hang);
   for (const rz of [-0.6, 0.6]) { const r = mk(new THREE.BoxGeometry(0.02, 0.24, 0.02), M.rod, hang); r.position.set(0, 0.32, rz); }
+  hang.visible = A !== "hang_missing";
 
   // the man
   if (!cfg.exit && A !== "man_none") {
     const count = A === "man_two" ? 2 : 1;
     for (let i = 0; i < count; i++) {
-      const obj = makeMan();
-      const m = { obj, x: L - 1.5 + i * 0.2, z: i === 0 ? 0.85 : -0.75, speed: 1.25, phase: i * 1.7, stare: false, back: A === "man_back" };
+      const obj = makeMan({ bag: A !== "man_nobag", tie: A === "man_tie" ? M.tieOdd : null });
+      const m = { obj, x: L - 1.5 + i * 0.2, z: i === 0 ? (A === "man_center" ? 0 : 0.85) : -0.75, speed: 1.25, phase: i * 1.7, stare: false, back: A === "man_back", lookback: A === "man_lookback" };
       if (A === "man_fast") m.speed = 4.6;
       if (A === "man_giant") obj.scale.setScalar(1.42);
+      if (A === "man_small") obj.scale.setScalar(0.86);
+      if (A === "man_slow") m.speed = 0.7;
       if (A === "man_stare") m.stare = true;
       obj.position.set(m.x, 0, m.z);
       obj.rotation.y = m.back ? 0 : Math.PI;
@@ -722,6 +778,11 @@ function updateCorridor(k, dt, pl, inside) {
       poseMan(m.obj, 0);
       continue;
     }
+    if (m.lookback && m.x < pl.x - 3) {
+      m.obj.rotation.y = Math.atan2(-(pl.z - m.z), pl.x - m.x);
+      poseMan(m.obj, 0);
+      continue;
+    }
     m.x -= m.speed * dt;
     m.phase += m.speed * dt * 4.2 * (m.back ? -1 : 1);
     m.obj.position.x = m.x;
@@ -729,9 +790,20 @@ function updateCorridor(k, dt, pl, inside) {
     if (m.x < -0.6) m.obj.visible = false;
   }
   for (const d of ud.doors) {
+    if (d.behind) {
+      if (ud.active && inside && pl.x > d.x + 5) d.open = true;
+      if (d.open) d.pivot.rotation.y += (1.1 - d.pivot.rotation.y) * Math.min(1, dt * 0.9);
+      continue;
+    }
     if (!d.opens) continue;
     const target = (ud.active && pl.x > d.x - 3) ? 1.25 : 0;
     d.pivot.rotation.y += (target - d.pivot.rotation.y) * Math.min(1, dt * 1.6);
+  }
+  if (ud.latePoster && ud.active && inside && pl.x > ud.latePoster.x + 4) ud.latePoster.mesh.rotation.z = Math.PI;
+  if (A === "lights_behind" && ud.active && inside && pl.x > L / 2 && !ud.behindDone) {
+    ud.behindDone = true;
+    ud.tubes.forEach(t => { if (t.position.x < L / 2 - 4) t.material = ud.tubeOff; });
+    corrLights[k].forEach(p => { if (toLocal(cfg, p.position.x, p.position.z).x < L / 2 - 4) p.intensity = 0; });
   }
   if (A === "lights_flicker" && ud.active) {
     const off = Math.random() < (Math.sin(ud.time * 3) > 0.6 ? 0.35 : 0.04);
@@ -749,9 +821,9 @@ function updateCorridor(k, dt, pl, inside) {
   }
   if (ud.flood && ud.active) {
     const f = ud.flood;
-    if (!f.on && inside && pl.x > 11) { f.on = true; f.mesh.visible = true; sfx.rumble(); }
+    if (!f.on && inside && pl.x > 13) { f.on = true; f.mesh.visible = true; sfx.rumble(); }
     if (f.on && f.x > -0.4) {
-      f.x -= 7.8 * dt; f.mesh.position.x = f.x;
+      f.x -= 8.8 * dt; f.mesh.position.x = f.x;
       if (inside && f.x - 0.25 <= pl.x) caught();
       if (f.x <= -0.4) f.mesh.visible = false;
     }
@@ -773,11 +845,16 @@ function setCorridor(k, cfg) {
   groups[k] = buildCorridor(cfg);
   scene.add(groups[k]);
 }
-function pickAnomaly() {
-  if (Math.random() < 0.5) return null;
-  let pool = ANOMALIES.filter(a => !found.has(a.id) && a !== lastAnomaly);
-  if (!pool.length || Math.random() < 0.25) pool = ANOMALIES.filter(a => a !== lastAnomaly);
-  return pool[Math.floor(Math.random() * pool.length)];
+function pickAnomaly(n) {
+  if (Math.random() < 0.45) return null;
+  const weight = a => {
+    const t = a.tier === 1 ? Math.max(0.08, 1 - n * 0.16) : a.tier === 2 ? 1 : 1 + n * 0.45;
+    return t * (found.has(a.id) ? 0.7 : 1);
+  };
+  const pool = ANOMALIES.filter(a => a !== lastAnomaly);
+  let r = Math.random() * pool.reduce((sum, a) => sum + weight(a), 0);
+  for (const a of pool) { r -= weight(a); if (r <= 0) return a; }
+  return pool[pool.length - 1];
 }
 function spawn() {
   player.x = -W + 0.9; player.z = C / 2; player.yaw = -Math.PI / 2; player.pitch = 0;
@@ -809,7 +886,7 @@ function onRegionChange(prev, next) {
         const newCount = correct ? count + 1 : 0;
         const exit = newCount >= 8;
         lastAnomaly = current.anomaly;
-        setCorridor(1 - k, { uid: ++uidSeq, corr: 1 - k, startEnd: E, exit, anomaly: exit ? null : pickAnomaly() });
+        setCorridor(1 - k, { uid: ++uidSeq, corr: 1 - k, startEnd: E, exit, anomaly: exit ? null : pickAnomaly(newCount) });
         pending = { key, from: k, bend: E, newCount, foundId: correct && current.anomaly ? current.anomaly.id : null };
       }
       setSigns(pending.newCount);
@@ -932,7 +1009,7 @@ canvas.addEventListener("touchcancel", endTouch);
 
 // ---------------------------------------------------------------- sound
 const sfx = (() => {
-  let ac = null, master = null, muted = false;
+  let ac = null, master = null, hum = null, humOn = true, muted = false;
   function noiseBuffer(sec) {
     const b = ac.createBuffer(1, ac.sampleRate * sec, ac.sampleRate), d = b.getChannelData(0);
     for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
@@ -943,19 +1020,24 @@ const sfx = (() => {
       if (ac) { ac.resume(); return; }
       try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
       master = ac.createGain(); master.gain.value = 1; master.connect(ac.destination);
+      hum = ac.createGain(); hum.gain.value = 1; hum.connect(master);
       for (const [f, v] of [[100, 0.012], [200, 0.006], [120, 0.004]]) {
-        const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = f; gn.gain.value = v; o.connect(gn).connect(master); o.start();
+        const o = ac.createOscillator(), gn = ac.createGain(); o.frequency.value = f; gn.gain.value = v; o.connect(gn).connect(hum); o.start();
       }
       const n = ac.createBufferSource(); n.buffer = noiseBuffer(2); n.loop = true;
       const lp = ac.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 380;
-      const gn = ac.createGain(); gn.gain.value = 0.035; n.connect(lp).connect(gn).connect(master); n.start();
+      const gn = ac.createGain(); gn.gain.value = 0.035; n.connect(lp).connect(gn).connect(hum); n.start();
     },
-    step(run) {
+    setHum(on) {
+      if (!hum || humOn === on) return;
+      humOn = on; hum.gain.setTargetAtTime(on ? 1 : 0, ac.currentTime, 0.05);
+    },
+    step(run, delay = 0, vol = 1) {
       if (!ac || muted) return;
       const s = ac.createBufferSource(); s.buffer = noiseBuffer(0.09);
       const bp = ac.createBiquadFilter(); bp.type = "bandpass"; bp.frequency.value = run ? 1100 : 850; bp.Q.value = 1.2;
-      const gn = ac.createGain(); const t = ac.currentTime;
-      gn.gain.setValueAtTime(run ? 0.22 : 0.15, t); gn.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+      const gn = ac.createGain(); const t = ac.currentTime + delay;
+      gn.gain.setValueAtTime((run ? 0.22 : 0.15) * vol, t); gn.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
       s.connect(bp).connect(gn).connect(master); s.start(t);
     },
     rumble() {
@@ -1063,10 +1145,16 @@ function frame(now) {
       if (walkable(player.x, player.z + mz)) player.z += mz;
       const before = Math.floor(player.bob / Math.PI);
       player.bob += Math.hypot(mx, mz) * 3.4;
-      if (Math.floor(player.bob / Math.PI) !== before) sfx.step(run);
+      if (Math.floor(player.bob / Math.PI) !== before) {
+        sfx.step(run);
+        const here = !isBend(region) && corrCfg[region];
+        if (here && here.anomaly && here.anomaly.id === "steps_echo" && groups[region].userData.active) sfx.step(run, 0.32, 0.8);
+      }
     }
     const r = regionOf(player.x, player.z);
     if (r !== region) { const p = region; region = r; onRegionChange(p, r); }
+    const here = !isBend(region) && corrCfg[region];
+    sfx.setHum(!(here && here.anomaly && here.anomaly.id === "hum_stop" && groups[region].userData.active));
     for (let k = 0; k < 2; k++) if (groups[k]) updateCorridor(k, dt, toLocal(corrCfg[k], player.x, player.z), region === k);
   }
   camera.position.set(player.x, EYE + Math.sin(player.bob * 2) * 0.022, player.z);
@@ -1076,7 +1164,7 @@ function frame(now) {
 }
 
 // ---------------------------------------------------------------- boot
-const JP_TEXT = "出口光の美術展えがお歯科ヶ月で話せる弦楽四重奏夜構内では走らないでください駅徒歩分関係者以外立入禁止非常ボタン禁煙ご案内";
+const JP_TEXT = "入出口8光の美術展えがお歯科ヶ月で話せる弦楽四重奏夜構内では走らないでください駅徒歩分関係者以外立入禁止非常ボタン禁煙ご案内";
 const fontsReady = Promise.race([
   Promise.all([
     document.fonts.load(`900 40px "Noto Sans JP"`, JP_TEXT),
