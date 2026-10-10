@@ -1,0 +1,564 @@
+<title>Call 8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Overpass:wght@500;700;900&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a fluorescent-lit sales floor. Yellow transit-style sign on top, the CRM dialer
+   in the middle, a strip of office floor where the manager walks past, two choices below.
+   Single deliberate look (fluorescent tile + signage yellow), works on any host theme. */
+:root {
+  --wall: #e6eae3;          /* fluorescent tile, faint green cast */
+  --panel: #fafbf8;
+  --ink: #1b1d1a;
+  --muted: #5f665c;
+  --line: #c6ccc2;
+  --sign: #f2c300;          /* transit signage yellow */
+  --alarm: #c3321d;
+  --ok: #2e7d4f;
+  --floor-a: #d3d8cf;
+  --floor-b: #c8cec3;
+  --suit: #2c3340;
+  --skin: #e2b892;
+  --f-sign: "Overpass", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  background: var(--wall);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.wrap {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-inline: 16px;
+  padding-block: 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---------- Sign ---------- */
+.sign {
+  background: var(--sign);
+  color: var(--ink);
+  border-radius: 6px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  font-family: var(--f-sign);
+  box-shadow: 0 2px 0 rgba(0,0,0,.18);
+}
+.sign .count {
+  display: flex; align-items: center; gap: 12px;
+}
+.sign .num {
+  font-weight: 900;
+  font-size: 56px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 1ch;
+  transition: transform .25s;
+}
+.sign .num.bump { transform: scale(1.18); }
+.sign .num.reset { color: var(--alarm); }
+.sign .label { font-weight: 700; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; line-height: 1.15; }
+.sign .label small { display: block; font-weight: 500; letter-spacing: .02em; text-transform: none; font-size: 13px; }
+.sign .exit {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 900; font-size: 22px; letter-spacing: .02em;
+  border-left: 3px solid var(--ink); padding-left: 14px;
+}
+.sign .exit .arrow { font-size: 34px; line-height: 1; }
+.sign .exit small { display: block; font-weight: 500; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ---------- Monitor / CRM ---------- */
+.stage { position: relative; }
+.monitor {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform .4s;
+}
+.monitor.tilt { transform: rotate(-1.2deg); }
+.topbar {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px; color: var(--muted);
+}
+.topbar b { color: var(--ink); font-weight: 600; }
+.topbar .clock { font-family: var(--f-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.crm {
+  display: grid;
+  grid-template-columns: 1.05fr 1.35fr .8fr;
+}
+.crm > section { padding: 14px; min-width: 0; }
+.crm > section + section { border-left: 1px solid var(--line); }
+.eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 8px;
+}
+.who { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--ink); color: var(--panel);
+  display: grid; place-items: center;
+  font-family: var(--f-sign); font-weight: 700; font-size: 16px; flex: none;
+}
+.who h2 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.2; }
+.who p { margin: 0; color: var(--muted); font-size: 13px; }
+dl.fields { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; font-size: 13px; }
+dl.fields dt { color: var(--muted); }
+dl.fields dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+.pill {
+  display: inline-block; padding: 1px 8px; border-radius: 99px;
+  border: 1px solid var(--ink); font-size: 12px; font-weight: 600;
+}
+.note {
+  margin-top: 12px; padding: 8px 10px;
+  background: var(--wall); border-radius: 4px; font-size: 13px;
+}
+.note .meta { color: var(--muted); font-size: 12px; display: block; margin-bottom: 2px; }
+ol.script { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+ol.script li { padding-left: 4px; }
+ol.script li::marker { font-family: var(--f-mono); color: var(--muted); font-size: 12px; }
+.hold { margin-top: 14px; font-size: 12.5px; color: var(--muted); }
+.status { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 4px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); animation: pulse 1.2s infinite; }
+@keyframes pulse { 50% { opacity: .25; } }
+.timer { font-family: var(--f-mono); font-size: 26px; font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+.keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.keys span {
+  display: grid; place-items: center; height: 30px;
+  border: 1px solid var(--line); border-radius: 4px;
+  font-family: var(--f-mono); font-size: 14px;
+}
+
+/* Rules notice, only on call 0 */
+.notice {
+  position: absolute; right: -6px; top: 58px; z-index: 3;
+  width: 230px; padding: 12px 14px;
+  background: var(--sign); color: var(--ink);
+  font-family: var(--f-sign); font-size: 13.5px; line-height: 1.35;
+  box-shadow: 0 6px 16px rgba(0,0,0,.18);
+  transform: rotate(2deg);
+}
+.notice h3 { margin: 0 0 6px; font-size: 14px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.notice ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+
+/* ---------- Office floor ---------- */
+.floor {
+  position: relative; height: 92px; overflow: hidden;
+  border-radius: 6px;
+  background:
+    linear-gradient(to bottom, var(--wall) 0 46%, transparent 46%),
+    repeating-linear-gradient(90deg, var(--floor-a) 0 40px, var(--floor-b) 40px 41px);
+  border: 1px solid var(--line);
+}
+.floor::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 46%; height: 2px; background: var(--line);
+}
+.greg {
+  position: absolute; bottom: 8px; left: -50px; width: 30px; height: 74px; z-index: 2;
+  animation: walk 7s linear 0.6s forwards;
+}
+.greg.second { animation-delay: 1.4s; }
+.greg.reverse { animation-name: walkback; }
+.greg.reverse .body-wrap { transform: scaleX(-1); }
+.greg.stop { animation-name: walkstop; animation-duration: 4s; }
+.greg .body-wrap { position: relative; width: 100%; height: 100%; animation: bob .5s ease-in-out infinite; }
+.greg.stop .body-wrap { animation: bob .5s ease-in-out 5 forwards; }
+.greg .head { position: absolute; top: 0; left: 6px; width: 18px; height: 20px; border-radius: 50%; background: var(--skin); }
+.greg .hair { position: absolute; top: -1px; left: 6px; width: 18px; height: 8px; border-radius: 9px 9px 2px 2px; background: var(--ink); }
+.greg .eye { position: absolute; top: 9px; width: 3px; height: 3px; border-radius: 50%; background: var(--ink); left: 20px; }
+.greg .eye.b { display: none; }
+.greg.stop.stare .eye { left: 11px; }
+.greg.stop.stare .eye.b { display: block; left: 17px; }
+.greg .torso { position: absolute; top: 20px; left: 3px; width: 24px; height: 30px; border-radius: 5px 5px 2px 2px; background: var(--suit); }
+.greg .tie { position: absolute; top: 21px; left: 13px; width: 4px; height: 18px; background: var(--alarm); }
+.greg .leg { position: absolute; top: 49px; width: 8px; height: 24px; background: var(--suit); transform-origin: top center; }
+.greg .leg.l { left: 6px; animation: stepA .5s ease-in-out infinite; }
+.greg .leg.r { left: 16px; animation: stepB .5s ease-in-out infinite; }
+.greg .mug { position: absolute; top: 34px; left: 24px; width: 9px; height: 10px; background: var(--panel); border: 1px solid var(--ink); border-radius: 1px 1px 3px 3px; }
+.greg.stop .leg { animation-iteration-count: 5; }
+@keyframes walk { from { left: -50px; } to { left: calc(100% + 20px); } }
+@keyframes walkback { from { left: calc(100% + 20px); } to { left: -50px; } }
+@keyframes walkstop { 0% { left: -50px; } 60% { left: calc(50% - 15px); } 100% { left: calc(50% - 15px); } }
+@keyframes bob { 50% { transform: translateY(-2px); } }
+@keyframes stepA { 50% { transform: rotate(18deg); } }
+@keyframes stepB { 50% { transform: rotate(-18deg); } }
+.greg.reverse .body-wrap { animation-name: bobflip; }
+@keyframes bobflip { 0%,100% { transform: scaleX(-1); } 50% { transform: scaleX(-1) translateY(-2px); } }
+.floor .tag {
+  position: absolute; left: 10px; top: 8px; font-size: 11px; color: var(--muted);
+  letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
+}
+
+/* ---------- Choices ---------- */
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.choices.swap .hang { order: 2; }
+.choices.swap .next { order: 1; }
+.choices button {
+  font-family: var(--f-sign); font-weight: 700; font-size: 18px;
+  padding: 14px 16px; border-radius: 6px; cursor: pointer;
+  border: 2px solid var(--ink);
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  transition: transform .1s, background .15s;
+}
+.choices button small { font-family: var(--f-body); font-weight: 500; font-size: 12.5px; }
+.choices button:active { transform: translateY(1px); }
+.choices button:focus-visible { outline: 3px solid var(--sign); outline-offset: 3px; }
+.hang { background: var(--panel); color: var(--alarm); border-color: var(--alarm) !important; }
+.hang:hover { background: #f6e3df; }
+.next { background: var(--ink); color: var(--panel); }
+.next:hover { background: #33372f; }
+.choices button:disabled { opacity: .55; cursor: default; }
+
+.toast {
+  min-height: 22px; text-align: center; font-size: 14px; color: var(--muted);
+}
+.toast.bad { color: var(--alarm); font-weight: 600; }
+.toast.good { color: var(--ok); font-weight: 600; }
+.footer { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.footer kbd { font-family: var(--f-mono); border: 1px solid var(--line); border-radius: 3px; padding: 0 5px; background: var(--panel); }
+
+/* ---------- Dial transition + ending ---------- */
+.blackout {
+  position: fixed; inset: 0; background: var(--ink); color: var(--sign);
+  display: grid; place-items: center; z-index: 20;
+  font-family: var(--f-sign); font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  opacity: 0; pointer-events: none; transition: opacity .25s;
+}
+.blackout.on { opacity: 1; pointer-events: auto; }
+.ending {
+  position: fixed; inset: 0; z-index: 30; background: var(--sign); color: var(--ink);
+  display: grid; place-items: center; padding: 24px 16px; text-align: center;
+}
+.ending .inner { max-width: 440px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.ending h2 { font-family: var(--f-sign); font-weight: 900; font-size: 44px; line-height: 1; margin: 0; text-wrap: balance; }
+.ending p { margin: 0; font-size: 16px; }
+.ending .stats { font-family: var(--f-mono); font-size: 14px; }
+.ending button {
+  font-family: var(--f-sign); font-weight: 700; font-size: 17px; cursor: pointer;
+  background: var(--ink); color: var(--sign); border: 0; border-radius: 6px; padding: 12px 22px;
+}
+.ending button:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+
+@media (max-width: 760px) {
+  .crm { grid-template-columns: 1fr; }
+  .crm > section + section { border-left: 0; border-top: 1px solid var(--line); }
+  .notice { position: static; width: auto; transform: none; margin-bottom: 12px; }
+  .sign .num { font-size: 44px; }
+  .sign .exit { font-size: 17px; padding-left: 10px; }
+  .keys span { height: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot, .greg .body-wrap, .greg .leg { animation: none !important; }
+  .greg { animation-duration: 3s; }
+  .sign .num, .monitor { transition: none; }
+}
+</style>
+
+<div class="wrap">
+  <header class="sign" aria-live="polite">
+    <div class="count">
+      <span class="num" id="num">0</span>
+      <span class="label">Calls cleared<small id="found">Anomalies found: 0</small></span>
+    </div>
+    <div class="exit">
+      <span>8<small>Clock out</small></span>
+      <span class="arrow" aria-hidden="true">→</span>
+    </div>
+  </header>
+
+  <div class="stage">
+    <aside class="notice" id="notice">
+      <h3>Notice</h3>
+      <ol>
+        <li>Don't overlook anything strange on the call screen.</li>
+        <li>If something is off, hang up right away.</li>
+        <li>If nothing is off, dial the next call.</li>
+        <li>Clear 8 calls in a row to clock out.</li>
+      </ol>
+    </aside>
+
+    <div class="monitor" id="monitor">
+      <div class="topbar">
+        <span><b>Northbeam Dialer</b> · Power queue · Lead 1 of 1</span>
+        <span class="clock" id="clock">4:47 PM</span>
+      </div>
+      <div class="crm">
+        <section>
+          <p class="eyebrow">Lead</p>
+          <div class="who">
+            <div class="avatar" id="initials">DW</div>
+            <div>
+              <h2 id="name">Dana Whitfield</h2>
+              <p><span id="title">Director of Operations</span> · <span id="connections">500+ connections</span></p>
+            </div>
+          </div>
+          <dl class="fields">
+            <dt>Company</dt><dd id="company">Whitfield Freight Co.</dd>
+            <dt>Phone</dt><dd class="mono" id="phone">(415) 555-0187</dd>
+            <dt>Email</dt><dd class="mono" id="email">dana@whitfieldfreight.com</dd>
+            <dt>Local time</dt><dd id="local">Oakland, CA · 1:47 PM</dd>
+            <dt>Stage</dt><dd><span class="pill" id="stage">Discovery</span></dd>
+            <dt>Deal</dt><dd class="mono" id="value">$24,000</dd>
+          </dl>
+          <div class="note">
+            <span class="meta"><span id="attempts">3 previous attempts</span> · <span id="touched">Last touched Oct 3</span></span>
+            <span id="note">Asked to call back Thursday after 2pm. Interested in route tracking.</span>
+          </div>
+        </section>
+        <section>
+          <p class="eyebrow">Talk track</p>
+          <ol class="script" id="script"></ol>
+          <p class="hold">♪ Hold music: <span class="mono" id="hold">Northbeam_Jingle.mp3</span></p>
+        </section>
+        <section>
+          <p class="eyebrow">Call</p>
+          <div class="status"><span class="dot" id="dot"></span><span id="status">Ringing</span></div>
+          <div class="timer" id="timer">00:00</div>
+          <div class="keys" id="keys"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="floor" id="floor" aria-hidden="true"><span class="tag">Sales floor</span></div>
+
+  <div class="choices" id="choices">
+    <button class="hang" id="hang" type="button">← Hang up<small>Something's off</small></button>
+    <button class="next" id="next" type="button">Dial next →<small>Nothing's off</small></button>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="footer">
+    <span>Keys: <kbd>←</kbd> hang up · <kbd>→</kbd> dial next</span>
+    <span id="best">Best time: none yet</span>
+  </div>
+</div>
+
+<div class="blackout" id="blackout">Dialing…</div>
+<div class="ending" id="ending" hidden>
+  <div class="inner">
+    <h2>You clocked out.</h2>
+    <p>Eight clean calls in a row. Dana will be there tomorrow.</p>
+    <p class="stats" id="endstats"></p>
+    <button type="button" id="again">Clock back in</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const BASE = {
+    clock: "4:47 PM",
+    initials: "DW", name: "Dana Whitfield", title: "Director of Operations", connections: "500+ connections",
+    company: "Whitfield Freight Co.", phone: "(415) 555-0187", email: "dana@whitfieldfreight.com",
+    local: "Oakland, CA · 1:47 PM", stage: "Discovery", value: "$24,000",
+    attempts: "3 previous attempts", touched: "Last touched Oct 3",
+    note: "Asked to call back Thursday after 2pm. Interested in route tracking.",
+    script: [
+      "Hi Dana, it's Sam from Northbeam. Did I catch you at an okay time?",
+      "You mentioned route tracking last week. What's slowing your dispatch team down right now?",
+      "Would a 20-minute demo on Tuesday or Wednesday work better?"
+    ],
+    hold: "Northbeam_Jingle.mp3",
+    status: "Ringing", dot: "ok",
+    keys: ["1","2","3","4","5","6","7","8","9","*","0","#"],
+    timer: "up", greg: "walk", swap: false, tilt: false
+  };
+
+  // Each anomaly changes one thing about the call screen. `hint` is shown when you miss it.
+  const ANOMALIES = [
+    { id: "phone",   hint: "The phone number had an extra digit.",         apply: d => d.phone = "(415) 555-01877" },
+    { id: "spell",   hint: "Her last name was spelled Whitfeild.",           apply: d => d.name = "Dana Whitfeild" },
+    { id: "funeral", hint: "The company was Whitfield Funeral Co.",          apply: d => d.company = "Whitfield Funeral Co." },
+    { id: "stage",   hint: "The stage said Closed Lost.",                    apply: d => d.stage = "Closed Lost" },
+    { id: "value",   hint: "The deal was $42,000, not $24,000.",             apply: d => d.value = "$42,000" },
+    { id: "email",   hint: "The email ended in .con.",                       apply: d => d.email = "dana@whitfieldfreight.con" },
+    { id: "sam",     hint: "The script said “it's Dana from Northbeam.”",    apply: d => d.script[0] = "Hi Dana, it's Dana from Northbeam. Did I catch you at an okay time?" },
+    { id: "tuesday", hint: "The script offered Tuesday or Tuesday.",         apply: d => d.script[2] = "Would a 20-minute demo on Tuesday or Tuesday work better?" },
+    { id: "script2", hint: "The second script line asked about her family.", apply: d => d.script[1] = "You mentioned route tracking last week. How is your family sleeping right now?" },
+    { id: "stop",    hint: "The note said she asked us to stop calling.",    apply: d => d.note = "Asked us to stop calling. Interested in route tracking." },
+    { id: "attempts",hint: "There were 3,000 previous attempts.",            apply: d => d.attempts = "3,000 previous attempts" },
+    { id: "initials",hint: "Her avatar showed your initials, SM.",           apply: d => d.initials = "SM" },
+    { id: "touched", hint: "The lead was last touched tomorrow.",            apply: d => d.touched = "Last touched tomorrow" },
+    { id: "title",   hint: "Her title said (former).",                       apply: d => d.title = "Director of Operations (former)" },
+    { id: "conn",    hint: "She had 0 connections.",                         apply: d => d.connections = "0 connections" },
+    { id: "local",   hint: "Her local time was 4:47 AM.",                    apply: d => d.local = "Oakland, CA · 4:47 AM" },
+    { id: "clock",   hint: "Your clock read 4:74 PM.",                       apply: d => d.clock = "4:74 PM" },
+    { id: "hold",    hint: "The hold music was Dana_Breathing.mp3.",         apply: d => d.hold = "Dana_Breathing.mp3" },
+    { id: "status",  hint: "The status said she was calling you.",           apply: d => { d.status = "Incoming: Dana Whitfield"; d.dot = "alarm"; } },
+    { id: "timer",   hint: "The call timer ran backward.",                   apply: d => d.timer = "down" },
+    { id: "keys",    hint: "The keypad had no 8.",                           apply: d => d.keys = ["1","2","3","4","5","6","7","7","9","*","0","#"] },
+    { id: "swap",    hint: "The two buttons had swapped places.",            apply: d => d.swap = true },
+    { id: "tilt",    hint: "The whole screen was tilted.",                   apply: d => d.tilt = true },
+    { id: "gregback",hint: "Greg walked the wrong way.",                     apply: d => d.greg = "reverse" },
+    { id: "gregstop",hint: "Greg stopped and stared at you.",                apply: d => d.greg = "stare" },
+    { id: "gregnone",hint: "Greg never walked by.",                          apply: d => d.greg = "none" },
+    { id: "greg2",   hint: "There were two Gregs.",                          apply: d => d.greg = "double" }
+  ];
+
+  const $ = id => document.getElementById(id);
+  const hot = window.claude?.hot;
+  let state, current, timerHandle, busy = false;
+
+  function fresh() {
+    return { streak: 0, found: [], startedAt: Date.now(), firstCall: true, lastId: null };
+  }
+
+  function pick() {
+    if (state.firstCall) return null;          // the first call is always clean, so you can learn it
+    if (Math.random() < 0.45) return null;
+    let pool = ANOMALIES.filter(a => !state.found.includes(a.id) && a.id !== state.lastId);
+    if (!pool.length) pool = ANOMALIES.filter(a => a.id !== state.lastId);
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function gregEl(extra) {
+    const g = document.createElement("div");
+    g.className = "greg " + (extra || "");
+    g.innerHTML = '<div class="body-wrap"><div class="leg l"></div><div class="leg r"></div><div class="torso"></div><div class="tie"></div><div class="mug"></div><div class="head"></div><div class="hair"></div><div class="eye"></div><div class="eye b"></div></div>';
+    return g;
+  }
+
+  function render() {
+    const d = structuredClone(BASE);
+    if (current) current.apply(d);
+
+    for (const k of ["clock","initials","name","title","connections","company","phone","email","local","stage","value","attempts","touched","note","hold","status"]) {
+      $(k).textContent = d[k];
+    }
+    $("dot").style.background = d.dot === "alarm" ? "var(--alarm)" : "var(--ok)";
+    $("script").innerHTML = "";
+    d.script.forEach(line => { const li = document.createElement("li"); li.textContent = line; $("script").append(li); });
+    $("keys").innerHTML = "";
+    d.keys.forEach(k => { const s = document.createElement("span"); s.textContent = k; $("keys").append(s); });
+    $("choices").classList.toggle("swap", d.swap);
+    $("monitor").classList.toggle("tilt", d.tilt);
+    $("notice").hidden = state.streak !== 0;
+    $("num").textContent = state.streak;
+    $("found").textContent = `Anomalies found: ${state.found.length} of ${ANOMALIES.length}`;
+
+    // Greg, your manager, walks past once per call.
+    $("floor").querySelectorAll(".greg").forEach(n => n.remove());
+    if (d.greg === "walk") $("floor").append(gregEl());
+    if (d.greg === "reverse") $("floor").append(gregEl("reverse"));
+    if (d.greg === "stare") $("floor").append(gregEl("stop stare"));
+    if (d.greg === "double") { $("floor").append(gregEl()); $("floor").append(gregEl("second")); }
+
+    // Call timer
+    clearInterval(timerHandle);
+    let t = d.timer === "down" ? 59 : 0;
+    const show = () => {
+      const neg = t < 0, a = Math.abs(t);
+      $("timer").textContent = (neg ? "-" : "") + String(Math.floor(a / 60)).padStart(2, "0") + ":" + String(a % 60).padStart(2, "0");
+    };
+    show();
+    timerHandle = setInterval(() => { t += d.timer === "down" ? -1 : 1; show(); }, 1000);
+  }
+
+  function toast(msg, kind) {
+    const el = $("toast");
+    el.textContent = msg;
+    el.className = "toast" + (kind ? " " + kind : "");
+  }
+
+  function choose(sawAnomaly) {
+    if (busy || !$("ending").hidden) return;
+    const was = current;
+    const right = sawAnomaly === !!was;
+    state.firstCall = false;
+
+    if (right) {
+      if (was && !state.found.includes(was.id)) state.found.push(was.id);
+      state.streak += 1;
+      toast(was ? "Good catch. " + was.hint : "Clean call.", "good");
+    } else {
+      state.streak = 0;
+      toast(was ? "Missed it. " + was.hint + " Back to 0." : "There was nothing wrong. Back to 0.", "bad");
+    }
+
+    if (state.streak >= 8) return finish();
+
+    state.lastId = was ? was.id : null;
+    busy = true;
+    $("hang").disabled = $("next").disabled = true;
+    $("blackout").classList.add("on");
+    setTimeout(() => {
+      current = pick();
+      render();
+      const n = $("num");
+      n.classList.toggle("reset", !right);
+      n.classList.add("bump");
+      setTimeout(() => n.classList.remove("bump"), 250);
+      $("blackout").classList.remove("on");
+      $("hang").disabled = $("next").disabled = false;
+      busy = false;
+    }, 650);
+  }
+
+  function fmt(ms) {
+    const s = Math.round(ms / 1000);
+    return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0");
+  }
+
+  function readBest() { try { return Number(localStorage.getItem("call8-best")) || 0; } catch { return 0; } }
+  function showBest() {
+    const b = readBest();
+    $("best").textContent = b ? "Best time: " + fmt(b) : "Best time: none yet";
+  }
+
+  function finish() {
+    clearInterval(timerHandle);
+    const took = Date.now() - state.startedAt;
+    let best = readBest();
+    const record = !best || took < best;
+    if (record) { best = took; try { localStorage.setItem("call8-best", String(took)); } catch {} }
+    $("endstats").textContent = `Shift time ${fmt(took)} · Best ${fmt(best)}${record ? " (new record)" : ""} · Anomalies found ${state.found.length} of ${ANOMALIES.length}`;
+    $("num").textContent = 8;
+    $("ending").hidden = false;
+    $("again").focus();
+    showBest();
+  }
+
+  function restart() {
+    const keepFound = state.found;
+    state = fresh();
+    state.found = keepFound;
+    current = null;
+    $("ending").hidden = true;
+    $("num").classList.remove("reset");
+    toast("");
+    render();
+  }
+
+  $("hang").addEventListener("click", () => choose(true));
+  $("next").addEventListener("click", () => choose(false));
+  $("again").addEventListener("click", restart);
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft") { e.preventDefault(); choose(true); }
+    if (e.key === "ArrowRight") { e.preventDefault(); choose(false); }
+  });
+
+  function start(saved) {
+    state = saved && saved.state ? saved.state : fresh();
+    current = saved && saved.currentId ? ANOMALIES.find(a => a.id === saved.currentId) || null : null;
+    showBest();
+    render();
+    toast(state.firstCall ? "Study this call. It's what normal looks like." : "");
+  }
+
+  hot?.snapshot?.(() => ({ state, currentId: current ? current.id : null }));
+  hot?.ready ? hot.ready(start) : start(hot?.data ?? {});
+})();
+</script>
