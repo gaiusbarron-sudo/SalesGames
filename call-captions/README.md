@@ -26,6 +26,32 @@ reads what the member is saying as they say it.
 Only the caller is captioned: the softphone's speaker output is the caller's
 voice, and the agent's own microphone is not captured.
 
+## Quick start: just you, on your own computer
+
+1. **Install Node.js** (the LTS version) from https://nodejs.org.
+2. **Get this folder.** On GitHub, open the branch, choose **Code → Download
+   ZIP**, unzip it, and open the `call-captions` folder.
+3. **Double-click the start file:** `start-windows.bat` on Windows, or
+   `start-mac.command` on a Mac. (On a Mac, the first time, right-click it,
+   choose **Open**, then **Open** again.) The first run installs what's needed
+   and opens your settings file.
+4. **Fill in the settings file** and save it:
+   ```ini
+   CAPTION_PROVIDER=aws
+   AWS_REGION=us-east-1
+   AWS_ACCESS_KEY_ID=your access key
+   AWS_SECRET_ACCESS_KEY=your secret key
+   ```
+   (Leave `CAPTION_PROVIDER=mock` for now to try the demo without AWS.)
+5. **Double-click the start file again.** The caption window opens in your
+   browser. Keep the small black window open while you use captions; close it
+   when you're done.
+6. Follow **Using it with Ringy** below.
+
+The AWS keys come from **Set up Amazon Transcribe** below. Keep them private:
+they stay in the settings file on your computer and are never shown in the
+browser.
+
 ## Try it
 
 Requires Node.js 22 or newer.
@@ -49,14 +75,17 @@ One-time setup in the AWS console, done by whoever manages your AWS account:
    Amazon Transcribe is a HIPAA-eligible service under it. Do this before
    sending any real member calls.
 2. **Opt out of AI training.** In **AWS Organizations → Policies → AI services
-   opt-out policies**, attach `aws/ai-opt-out-policy.json` so AWS doesn't keep
+   opt-out policies** (if you have a single AWS account, first choose **Create
+   an organization** in AWS Organizations; it's free), attach `aws/ai-opt-out-policy.json` so AWS doesn't keep
    or use your call audio to improve its models. (Use the `default` service key
    instead of `transcribe` to opt out of every AWS AI service.)
 3. **Create a least-privilege identity.** In **IAM**, create a policy from
    `aws/iam-policy.json`. It allows starting live transcription and nothing
    else. Attach it to:
    - an **IAM role**, if the caption server runs on AWS (EC2, ECS), or
-   - an **IAM user** with an access key, if it runs on an office machine.
+   - an **IAM user** with an access key, if it runs on your own computer or an
+     office machine. Under the user's **Security credentials**, choose **Create
+     access key** and copy both values into the settings file.
 4. **Pick a region** close to your agents (for example `us-east-1` or
    `us-west-2`).
 
