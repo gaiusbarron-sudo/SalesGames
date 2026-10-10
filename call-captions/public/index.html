@@ -18,7 +18,7 @@
       <label class="source">
         <span>Audio from</span>
         <select id="source">
-          <option value="display">Softphone (share its window or tab audio)</option>
+          <option value="display">Dialer tab (e.g. Ringy) or softphone</option>
           <option value="mic">Microphone (testing only)</option>
         </select>
       </label>
@@ -29,9 +29,10 @@
   <main>
     <section id="captions" class="captions" aria-live="polite" aria-label="Caller captions">
       <p id="empty" class="empty">
-        Press <strong>Start captions</strong> when a call begins. When the browser asks what to
-        share, pick your softphone's tab or window (or <em>Entire screen</em>) and turn on
-        <strong>Share audio</strong>. Captions of the caller appear here.
+        Press <strong>Start captions</strong> at the start of your shift. When the browser asks
+        what to share, choose the <strong>Chrome tab</strong> with your dialer (for Ringy, the
+        <em>app.ringy.com</em> tab) and make sure <strong>Also share tab audio</strong> is on.
+        Captions of each caller appear here, call after call, until you press Stop.
       </p>
       <div id="lines"></div>
       <p id="interim" class="line interim"></p>

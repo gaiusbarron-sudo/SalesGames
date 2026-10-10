@@ -49,6 +49,26 @@ cp .env.example .env
 npm start
 ```
 
+## Using it with Ringy
+
+Ringy runs in the browser at app.ringy.com, so captions work by sharing that tab's
+audio. This works on Windows and Mac.
+
+1. Use Chrome or Edge for both Ringy and the caption window.
+2. Log in to Ringy in one tab. Open the caption window in a **separate browser
+   window** (drag its tab out) and place it beside Ringy so both stay visible.
+3. In the caption window, press **Start captions**, choose the **Chrome Tab**
+   section of the share dialog, select the **app.ringy.com** tab, and make sure
+   **Also share tab audio** is switched on. Then press **Share**.
+4. Dial as usual. Captions run continuously across power-dialer calls; there's
+   no need to restart them for each call. Press **Clear** between calls if you
+   want a fresh transcript for each member.
+5. If you close or switch the Ringy tab's sharing off, captions stop and the
+   window says so; press **Start captions** again.
+
+Turn the caption window off for calls with members who decline transcription
+(see the checklist below).
+
 ## Using it on a call
 
 1. Open the caption window beside the softphone (Chrome or Edge).
