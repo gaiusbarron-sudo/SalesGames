@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Call Captions</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="title">
+      <h1>Call Captions</h1>
+      <span id="status" class="pill" data-state="idle">Not listening</span>
+      <span id="timer" class="timer" hidden>00:00</span>
+    </div>
+    <div class="controls">
+      <label class="source">
+        <span>Audio from</span>
+        <select id="source">
+          <option value="display">Softphone (share its window or tab audio)</option>
+          <option value="mic">Microphone (testing only)</option>
+        </select>
+      </label>
+      <button id="toggle" class="primary" type="button">Start captions</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="captions" class="captions" aria-live="polite" aria-label="Caller captions">
+      <p id="empty" class="empty">
+        Press <strong>Start captions</strong> when a call begins. When the browser asks what to
+        share, pick your softphone's tab or window (or <em>Entire screen</em>) and turn on
+        <strong>Share audio</strong>. Captions of the caller appear here.
+      </p>
+      <div id="lines"></div>
+      <p id="interim" class="line interim"></p>
+    </section>
+  </main>
+
+  <footer class="bar foot">
+    <div class="tools">
+      <button id="smaller" type="button" aria-label="Smaller text">A−</button>
+      <button id="larger" type="button" aria-label="Larger text">A+</button>
+      <button id="copy" type="button">Copy transcript</button>
+      <button id="clear" type="button">Clear</button>
+    </div>
+    <p class="privacy">Captions may contain member health information. Nothing is saved; the transcript is gone when you clear it or close this window.</p>
+  </footer>
+
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>
