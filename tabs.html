@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open My Tabs</title>
+<style>
+:root {
+  --bg: #f4f5f2;
+  --panel: #ffffff;
+  --ink: #1b1d1a;
+  --muted: #5f665c;
+  --line: #d3d8cf;
+  --accent: #1f6feb;
+  --accent-ink: #ffffff;
+  --warn-bg: #fff4d6;
+  --warn-ink: #6b4b00;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141614;
+    --panel: #1d201d;
+    --ink: #e8ebe6;
+    --muted: #9aa396;
+    --line: #333833;
+    --accent: #4c8dff;
+    --accent-ink: #0b0d0b;
+    --warn-bg: #3a2f10;
+    --warn-ink: #f2d27a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141614; --panel: #1d201d; --ink: #e8ebe6; --muted: #9aa396; --line: #333833;
+  --accent: #4c8dff; --accent-ink: #0b0d0b; --warn-bg: #3a2f10; --warn-ink: #f2d27a;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 640px; margin: 0 auto; padding: 40px 16px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+.sub { color: var(--muted); margin: 0 0 24px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+#open {
+  width: 100%;
+  font: inherit; font-size: 20px; font-weight: 600;
+  padding: 18px; border: 0; border-radius: 10px;
+  background: var(--accent); color: var(--accent-ink);
+  cursor: pointer;
+}
+#open:disabled { opacity: .5; cursor: not-allowed; }
+#open:not(:disabled):hover { filter: brightness(1.08); }
+label { display: block; font-weight: 600; margin: 20px 0 6px; }
+.hint { color: var(--muted); font-size: 14px; margin: 6px 0 0; }
+textarea {
+  width: 100%; min-height: 220px; resize: vertical;
+  font: 14px/1.6 ui-monospace, Menlo, Consolas, monospace;
+  color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 8px; padding: 12px;
+}
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+#warn {
+  display: none; margin-top: 16px; padding: 12px 14px; border-radius: 8px;
+  background: var(--warn-bg); color: var(--warn-ink); font-size: 14px;
+}
+#warn.show { display: block; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Open My Tabs</h1>
+  <p class="sub">One click opens every site on your list in its own tab.</p>
+
+  <div class="card">
+    <button id="open" type="button">Open all tabs</button>
+    <div id="warn" role="status"></div>
+
+    <label for="urls">Your tabs (one URL per line)</label>
+    <textarea id="urls" spellcheck="false" placeholder="mail.google.com&#10;https://calendar.google.com&#10;https://app.hubspot.com&#10;# lines starting with # are ignored"></textarea>
+    <p class="hint">Saved automatically in this browser. Lines starting with # are skipped.</p>
+  </div>
+</main>
+
+<script>
+const KEY = 'open-my-tabs:urls';
+const box = document.getElementById('urls');
+const btn = document.getElementById('open');
+const warn = document.getElementById('warn');
+
+function load() {
+  try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; }
+}
+function save(v) {
+  try { localStorage.setItem(KEY, v); } catch (e) { /* storage unavailable */ }
+}
+
+function parse(text) {
+  return text.split('\n')
+    .map(l => l.trim())
+    .filter(l => l && !l.startsWith('#'))
+    .map(l => /^[a-z][a-z0-9+.-]*:/i.test(l) ? l : 'https://' + l);
+}
+
+function refresh() {
+  const n = parse(box.value).length;
+  btn.disabled = n === 0;
+  btn.textContent = n === 0 ? 'Add some URLs below' : `Open all ${n} tab${n === 1 ? '' : 's'}`;
+}
+
+box.value = load();
+refresh();
+box.addEventListener('input', () => { save(box.value); refresh(); warn.classList.remove('show'); });
+
+btn.addEventListener('click', () => {
+  const urls = parse(box.value);
+  let blocked = 0;
+  for (const url of urls) {
+    const w = window.open(url, '_blank');
+    if (w) w.opener = null; else blocked++;
+  }
+  // Browsers usually allow only the first tab per click unless pop-ups are allowed for this page.
+  if (blocked > 0) {
+    warn.innerHTML = 'Only one tab opened? Your browser is blocking pop-ups. Click the blocked pop-up icon in the address bar, choose <b>Always allow pop-ups</b> for this page, then press the button again.';
+    warn.classList.add('show');
+  }
+});
+</script>
+</body>
+</html>
