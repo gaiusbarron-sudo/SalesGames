@@ -89,12 +89,22 @@ textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 <script>
 const KEY = 'open-my-tabs:urls';
+const DEFAULT_URLS = [
+  'https://agent.ushadvisors.com/home',
+  'https://app.ringy.com/home/billing-address',
+  'https://docs.google.com/presentation/d/e/2PACX-1vT9MmEjB7AIron7DIPLXk3YwbxNkrlORKzDPRPrnN_uoKQSqvHXoQnqVmRbyrRpOq_3PrAW-yiHIz6V/pub?start=false&loop=false&delayms=3000&slide=id.g35ebc6425d3_1_0',
+  'https://blank.ushamarketplace.app/campaigns',
+  'https://app.onlysales.io/',
+].join('\n');
 const box = document.getElementById('urls');
 const btn = document.getElementById('open');
 const warn = document.getElementById('warn');
 
 function load() {
-  try { return localStorage.getItem(KEY) || ''; } catch (e) { return ''; }
+  try {
+    const saved = localStorage.getItem(KEY);
+    return saved && saved.trim() ? saved : DEFAULT_URLS;
+  } catch (e) { return DEFAULT_URLS; }
 }
 function save(v) {
   try { localStorage.setItem(KEY, v); } catch (e) { /* storage unavailable */ }
