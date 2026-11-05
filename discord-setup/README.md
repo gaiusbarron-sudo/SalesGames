@@ -1,4 +1,4 @@
-# Discord team workspace setup
+# BlackCat Discord setup
 
 `setup.mjs` builds the **BlackCat** Discord server from `server.json`: it creates the channels and posts the text in them automatically. You can safely run it more than once: anything that already exists (matched by name) is skipped. You need Node 18 or newer; nothing to install.
 
@@ -42,10 +42,10 @@ Run it for real:
 DISCORD_TOKEN=your-bot-token DISCORD_GUILD_ID=your-server-id node setup.mjs
 ```
 
-At the end the script prints a **GitHub webhook URL** for #dev-updates. In GitHub, go to the repo's *Settings → Webhooks → Add webhook*, paste the URL (it ends in `/github`), set the content type to `application/json`, and pick the events you want. Keep the URL private, because anyone who has it can post to the channel.
+(The SalesGames layout also prints a GitHub webhook URL for #dev-updates; BlackCat has none.)
 
 ## Afterwards
 
 - Give trusted helpers the **Admin** role and private-channel members **Authorized** (right-click a member → *Roles*).
 - Once setup is done you can kick the bot, or remove its Administrator permission.
-- To change the layout, edit `server.json` and re-run. New items get added; existing ones aren't changed or deleted. The welcome message is posted only when #welcome is first created.
+- To change the layout, edit `server.json` and re-run. New items get added; existing ones aren't changed or deleted. Intro text is posted only when a channel is first created, so re-runs never repost it.
