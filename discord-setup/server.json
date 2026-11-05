@@ -1,17 +1,116 @@
 {
   "roles": [
-    { "name": "Admin", "color": "#8b5cf6", "hoist": true, "permissions": ["ADMINISTRATOR"] },
+    {
+      "name": "Admin",
+      "color": "#8b5cf6",
+      "hoist": true,
+      "permissions": [
+        "ADMINISTRATOR"
+      ]
+    },
     {
       "name": "Authorized",
       "color": "#ffc83d",
       "hoist": true,
       "permissions": [
-        "VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS", "ATTACH_FILES",
-        "EMBED_LINKS", "CREATE_PUBLIC_THREADS", "SEND_MESSAGES_IN_THREADS", "CONNECT", "SPEAK"
+        "VIEW_CHANNEL",
+        "SEND_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+        "ADD_REACTIONS",
+        "ATTACH_FILES",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "SEND_MESSAGES_IN_THREADS",
+        "CONNECT",
+        "SPEAK"
+      ]
+    },
+    {
+      "name": "AI",
+      "color": "#2ecc71",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL",
+        "SEND_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+        "ADD_REACTIONS",
+        "ATTACH_FILES",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "SEND_MESSAGES_IN_THREADS",
+        "CONNECT",
+        "SPEAK"
+      ]
+    },
+    {
+      "name": "Sales",
+      "color": "#3498db",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL",
+        "SEND_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+        "ADD_REACTIONS",
+        "ATTACH_FILES",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "SEND_MESSAGES_IN_THREADS",
+        "CONNECT",
+        "SPEAK"
+      ]
+    },
+    {
+      "name": "Software Engineer",
+      "color": "#111111",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL",
+        "SEND_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+        "ADD_REACTIONS",
+        "ATTACH_FILES",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "SEND_MESSAGES_IN_THREADS",
+        "CONNECT",
+        "SPEAK"
+      ]
+    },
+    {
+      "name": "Marketing",
+      "color": "#ffffff",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL",
+        "SEND_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+        "ADD_REACTIONS",
+        "ATTACH_FILES",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "SEND_MESSAGES_IN_THREADS",
+        "CONNECT",
+        "SPEAK"
+      ]
+    },
+    {
+      "name": "Researcher",
+      "color": "#f1c40f",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL",
+        "SEND_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+        "ADD_REACTIONS",
+        "ATTACH_FILES",
+        "EMBED_LINKS",
+        "CREATE_PUBLIC_THREADS",
+        "SEND_MESSAGES_IN_THREADS",
+        "CONNECT",
+        "SPEAK"
       ]
     }
   ],
-
   "categories": [
     {
       "name": "Start Here",
@@ -72,47 +171,104 @@
       "name": "Skills",
       "public": true,
       "channels": [
-        { "name": "sales", "topic": "Closing, prospecting, scripts and pipelines.", "message": "📈 **Sales:** closing, prospecting, objection handling, scripts, pipelines and CRMs. Share what's working." },
-        { "name": "marketing", "topic": "Ads, content, branding and growth.", "message": "📣 **Marketing:** ads, content, social, branding, funnels and growth. Share campaigns, results and lessons." },
-        { "name": "tech", "topic": "Dev, AI, automation and tools.", "message": "💻 **Tech:** development, AI, automation, no-code and tools. Ask questions, share builds, help others ship." },
-        { "name": "finance", "topic": "Investing, money management and deals.", "message": "💰 **Finance:** investing, money management, deal structure and business finance. Not financial advice; do your own research." }
+        {
+          "name": "sales",
+          "topic": "Closing, prospecting, scripts and pipelines.",
+          "message": "📈 **Sales:** closing, prospecting, objection handling, scripts, pipelines and CRMs. Share what's working."
+        },
+        {
+          "name": "marketing",
+          "topic": "Ads, content, branding and growth.",
+          "message": "📣 **Marketing:** ads, content, social, branding, funnels and growth. Share campaigns, results and lessons."
+        },
+        {
+          "name": "tech",
+          "topic": "Dev, AI, automation and tools.",
+          "message": "💻 **Tech:** development, AI, automation, no-code and tools. Ask questions, share builds, help others ship."
+        },
+        {
+          "name": "finance",
+          "topic": "Investing, money management and deals.",
+          "message": "💰 **Finance:** investing, money management, deal structure and business finance. Not financial advice; do your own research."
+        }
       ]
     },
     {
       "name": "Projects",
       "public": true,
       "channels": [
-        { "name": "project-1", "topic": "Project 1", "pin": true, "message": "# 🛠️ Project 1\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
-        { "name": "project-2", "topic": "Project 2", "pin": true, "message": "# 🛠️ Project 2\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
-        { "name": "project-3", "topic": "Project 3", "pin": true, "message": "# 🛠️ Project 3\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
-        { "name": "project-4", "topic": "Project 4", "pin": true, "message": "# 🛠️ Project 4\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
-        { "name": "project-5", "topic": "Project 5", "pin": true, "message": "# 🛠️ Project 5\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." }
+        {
+          "name": "project-1",
+          "topic": "Project 1",
+          "pin": true,
+          "message": "# 🛠️ Project 1\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project."
+        },
+        {
+          "name": "project-2",
+          "topic": "Project 2",
+          "pin": true,
+          "message": "# 🛠️ Project 2\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project."
+        },
+        {
+          "name": "project-3",
+          "topic": "Project 3",
+          "pin": true,
+          "message": "# 🛠️ Project 3\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project."
+        },
+        {
+          "name": "project-4",
+          "topic": "Project 4",
+          "pin": true,
+          "message": "# 🛠️ Project 4\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project."
+        },
+        {
+          "name": "project-5",
+          "topic": "Project 5",
+          "pin": true,
+          "message": "# 🛠️ Project 5\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project."
+        }
       ]
     },
     {
       "name": "Public Voice",
       "public": true,
       "channels": [
-        { "name": "Lounge", "type": "voice" },
-        { "name": "Co-Working", "type": "voice" },
-        { "name": "Meeting Room", "type": "voice" }
+        {
+          "name": "Lounge",
+          "type": "voice"
+        },
+        {
+          "name": "Co-Working",
+          "type": "voice"
+        },
+        {
+          "name": "Meeting Room",
+          "type": "voice"
+        }
       ]
     },
     {
       "name": "Private",
-      "roles": ["Authorized"],
+      "roles": [
+        "Authorized"
+      ],
       "channels": [
         {
           "name": "private-chat",
           "topic": "Authorized members only.",
           "message": "🔒 This area is for **Authorized** members only. Everything here stays here."
         },
-        { "name": "Private Room 1", "type": "voice" },
-        { "name": "Private Room 2", "type": "voice" }
+        {
+          "name": "Private Room 1",
+          "type": "voice"
+        },
+        {
+          "name": "Private Room 2",
+          "type": "voice"
+        }
       ]
     }
   ],
-
   "defaults": {
     "public": false,
     "viewRoles": [],

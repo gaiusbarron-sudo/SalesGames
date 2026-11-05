@@ -17,7 +17,7 @@
 
 Every text channel gets an intro message (the welcome, rules, intro template, opportunity and idea formats, and project cards are pinned).
 
-**Roles:** *Admin* (full control) and *Authorized*. To let someone into the private channels, right-click them → *Roles* → tick **Authorized**. Only Admins (and you, as the server owner) can post in the read-only channels.
+**Roles:** *Admin* (full control), *Authorized* (private channels), and skill roles *AI* (green), *Sales* (blue), *Software Engineer* (black), *Marketing* (white), *Researcher* (yellow) with normal member permissions. To let someone into the private channels, right-click them → *Roles* → tick **Authorized**. Only Admins (and you, as the server owner) can post in the read-only channels.
 
 To rename a project, change text, or add channels, edit `server.json` and re-run.
 
