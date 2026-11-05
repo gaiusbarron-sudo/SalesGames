@@ -124,7 +124,7 @@ const hexColor = (c) => (c ? parseInt(c.replace("#", ""), 16) : 0);
 
 process.on("uncaughtException", (e) => {
   console.error(`\nError: ${e.message}`);
-  process.exit(1);
+  process.exitCode = 1;
 });
 
 console.log(dryRun ? "Dry run: nothing will be changed.\n" : "Setting up server...\n");
