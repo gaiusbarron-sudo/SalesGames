@@ -1,87 +1,121 @@
 {
   "roles": [
-    { "name": "Admin", "color": "#e74c3c", "hoist": true, "permissions": ["ADMINISTRATOR"] },
+    { "name": "Admin", "color": "#8b5cf6", "hoist": true, "permissions": ["ADMINISTRATOR"] },
     {
-      "name": "Lead",
-      "color": "#f1c40f",
-      "hoist": true,
-      "permissions": [
-        "VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS", "ATTACH_FILES",
-        "EMBED_LINKS", "CREATE_PUBLIC_THREADS", "SEND_MESSAGES_IN_THREADS", "CONNECT", "SPEAK",
-        "MANAGE_MESSAGES", "MANAGE_THREADS", "MENTION_EVERYONE", "MUTE_MEMBERS", "MOVE_MEMBERS",
-        "MODERATE_MEMBERS", "KICK_MEMBERS"
-      ]
-    },
-    {
-      "name": "Team",
-      "color": "#3498db",
+      "name": "Authorized",
+      "color": "#ffc83d",
       "hoist": true,
       "permissions": [
         "VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS", "ATTACH_FILES",
         "EMBED_LINKS", "CREATE_PUBLIC_THREADS", "SEND_MESSAGES_IN_THREADS", "CONNECT", "SPEAK"
       ]
-    },
-    {
-      "name": "Guest",
-      "color": "#95a5a6",
-      "hoist": false,
-      "permissions": ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS"]
     }
   ],
 
   "categories": [
     {
-      "name": "Info",
+      "name": "Start Here",
+      "public": true,
       "channels": [
         {
           "name": "welcome",
-          "topic": "Start here: how this server works.",
-          "public": true,
+          "topic": "What BlackCat is and how it works.",
           "readOnly": true,
-          "message": "**Welcome to the SalesGames team workspace!**\n\n- New here? Ask an Admin for the **Team** role to unlock the rest of the server.\n- Announcements go in #announcements; day-to-day chat in #general.\n- Post a short daily update in #standup.\n- Bugs go in #qa-bugs with steps to reproduce.\n- Commits and PRs show up automatically in #dev-updates.",
-          "pin": true
+          "pin": true,
+          "message": "# 🐈‍⬛ Welcome to BlackCat\n\nBlackCat is a private network of people with high-value skill sets: operators, closers, builders, marketers and money minds. We're here to share knowledge, find opportunities and build things together.\n\n**How it works**\n1. Read #rules.\n2. Introduce yourself in #introductions using the template.\n3. Jump into #general, the skill channels, and the projects.\n4. Post deals, gigs and collaborations in #opportunities.\n5. Drop ideas in #ideas. The best ones become projects.\n\n**Private channels** are invite-only. An Admin gives you the **Authorized** role to unlock them.\n\nMove quietly. Deliver loudly. 🐈‍⬛"
         },
-        { "name": "announcements", "topic": "Important updates from leads.", "readOnly": true },
-        { "name": "links", "topic": "Repo, docs, design files and other useful links." }
+        {
+          "name": "rules",
+          "topic": "Read before posting.",
+          "readOnly": true,
+          "pin": true,
+          "message": "# 📜 Rules\n\n**1. Respect everyone.** No harassment, hate or personal attacks.\n**2. Bring value.** Share what you know, help where you can, and don't just take.\n**3. No spam or cold pitching.** Self-promo only in #opportunities, and keep it relevant.\n**4. What's said here stays here.** Don't screenshot or share members' info, deals or private conversations outside BlackCat.\n**5. No scams or shady offers.** Anything fraudulent or misleading gets you removed, no warnings.\n**6. Keep it on-topic.** Use the right channel for the right conversation.\n**7. Admins have the final say.** If something feels off, message an Admin.\n\nBreaking the rules can mean losing access or being removed from BlackCat."
+        },
+        {
+          "name": "announcements",
+          "topic": "Official updates from the BlackCat team.",
+          "readOnly": true,
+          "message": "📣 Official BlackCat updates will be posted here. Turn on notifications for this channel so you don't miss anything."
+        },
+        {
+          "name": "introductions",
+          "topic": "Introduce yourself to the network.",
+          "pin": true,
+          "message": "# 👋 Introductions\n\nNew here? Introduce yourself by copying this template:\n\n```\nName:\nLocation / time zone:\nWhat I do:\nTop skills:\nWhat I'm working on right now:\nWhat I'm looking for (partners, clients, mentors, etc.):\nHow I can help others:\n```\n\nThe better your intro, the faster the right people find you."
+        }
       ]
     },
     {
-      "name": "Team",
+      "name": "Community",
+      "public": true,
       "channels": [
-        { "name": "general", "topic": "Day-to-day team chat." },
-        { "name": "standup", "topic": "Daily async standup: yesterday / today / blockers." },
-        { "name": "random", "topic": "Off-topic." }
+        {
+          "name": "general",
+          "topic": "Open chat for the whole network.",
+          "message": "💬 Open chat for everyone in BlackCat. Say what's up, share wins, ask questions."
+        },
+        {
+          "name": "opportunities",
+          "topic": "Deals, gigs, jobs and collaborations.",
+          "pin": true,
+          "message": "# 💼 Opportunities\n\nPost deals, gigs, jobs, partnerships and collabs here. Use this format so people can act fast:\n\n```\nWhat: \nWho I'm looking for: \nCompensation / split: \nTimeline: \nHow to reach me: \n```\n\nAlways do your own due diligence before working with anyone. Report anything shady to an Admin."
+        },
+        {
+          "name": "ideas",
+          "topic": "Pitch ideas. The best ones become projects.",
+          "pin": true,
+          "message": "# 💡 Ideas\n\nGot an idea for a business, product, campaign or project? Pitch it here.\n\n```\nIdea:\nProblem it solves:\nWho it's for:\nSkills needed:\n```\n\nReact with 🔥 on the ones you'd back. The strongest ideas get moved into a project channel."
+        }
       ]
     },
     {
-      "name": "SalesGames",
+      "name": "Skills",
+      "public": true,
       "channels": [
-        { "name": "game-dev", "topic": "Building the games: code, mechanics, tech questions." },
-        { "name": "design", "topic": "Art, UI, sound and level ideas." },
-        { "name": "playtesting", "topic": "Playtest builds and feedback.", "extraRoles": ["Guest"] },
-        { "name": "qa-bugs", "topic": "Bug reports: what happened, what you expected, steps to reproduce." },
-        { "name": "dev-updates", "topic": "Automatic feed of GitHub activity.", "readOnly": true, "githubWebhook": true }
+        { "name": "sales", "topic": "Closing, prospecting, scripts and pipelines.", "message": "📈 **Sales:** closing, prospecting, objection handling, scripts, pipelines and CRMs. Share what's working." },
+        { "name": "marketing", "topic": "Ads, content, branding and growth.", "message": "📣 **Marketing:** ads, content, social, branding, funnels and growth. Share campaigns, results and lessons." },
+        { "name": "tech", "topic": "Dev, AI, automation and tools.", "message": "💻 **Tech:** development, AI, automation, no-code and tools. Ask questions, share builds, help others ship." },
+        { "name": "finance", "topic": "Investing, money management and deals.", "message": "💰 **Finance:** investing, money management, deal structure and business finance. Not financial advice; do your own research." }
       ]
     },
     {
-      "name": "Leads",
-      "roles": ["Lead"],
+      "name": "Projects",
+      "public": true,
       "channels": [
-        { "name": "leads", "topic": "Private planning for leads." }
+        { "name": "project-1", "topic": "Project 1", "pin": true, "message": "# 🛠️ Project 1\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
+        { "name": "project-2", "topic": "Project 2", "pin": true, "message": "# 🛠️ Project 2\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
+        { "name": "project-3", "topic": "Project 3", "pin": true, "message": "# 🛠️ Project 3\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
+        { "name": "project-4", "topic": "Project 4", "pin": true, "message": "# 🛠️ Project 4\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." },
+        { "name": "project-5", "topic": "Project 5", "pin": true, "message": "# 🛠️ Project 5\n\n**Goal:** _TBD_\n**Lead:** _TBD_\n**Status:** Open\n\nUse this channel to plan, assign tasks and post progress for this project." }
       ]
     },
     {
-      "name": "Voice",
+      "name": "Public Voice",
+      "public": true,
       "channels": [
-        { "name": "Huddle", "type": "voice" },
-        { "name": "Meeting Room", "type": "voice" },
-        { "name": "Focus Room", "type": "voice" }
+        { "name": "Lounge", "type": "voice" },
+        { "name": "Co-Working", "type": "voice" },
+        { "name": "Meeting Room", "type": "voice" }
+      ]
+    },
+    {
+      "name": "Private",
+      "roles": ["Authorized"],
+      "channels": [
+        {
+          "name": "private-chat",
+          "topic": "Authorized members only.",
+          "message": "🔒 This area is for **Authorized** members only. Everything here stays here."
+        },
+        { "name": "Private Room 1", "type": "voice" },
+        { "name": "Private Room 2", "type": "voice" }
       ]
     }
   ],
 
   "defaults": {
-    "viewRoles": ["Team", "Lead"],
-    "postRoles": ["Lead"]
+    "public": false,
+    "viewRoles": [],
+    "postRoles": []
   }
 }

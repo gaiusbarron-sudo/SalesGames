@@ -1,0 +1,87 @@
+{
+  "roles": [
+    { "name": "Admin", "color": "#e74c3c", "hoist": true, "permissions": ["ADMINISTRATOR"] },
+    {
+      "name": "Lead",
+      "color": "#f1c40f",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS", "ATTACH_FILES",
+        "EMBED_LINKS", "CREATE_PUBLIC_THREADS", "SEND_MESSAGES_IN_THREADS", "CONNECT", "SPEAK",
+        "MANAGE_MESSAGES", "MANAGE_THREADS", "MENTION_EVERYONE", "MUTE_MEMBERS", "MOVE_MEMBERS",
+        "MODERATE_MEMBERS", "KICK_MEMBERS"
+      ]
+    },
+    {
+      "name": "Team",
+      "color": "#3498db",
+      "hoist": true,
+      "permissions": [
+        "VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS", "ATTACH_FILES",
+        "EMBED_LINKS", "CREATE_PUBLIC_THREADS", "SEND_MESSAGES_IN_THREADS", "CONNECT", "SPEAK"
+      ]
+    },
+    {
+      "name": "Guest",
+      "color": "#95a5a6",
+      "hoist": false,
+      "permissions": ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "ADD_REACTIONS"]
+    }
+  ],
+
+  "categories": [
+    {
+      "name": "Info",
+      "channels": [
+        {
+          "name": "welcome",
+          "topic": "Start here: how this server works.",
+          "public": true,
+          "readOnly": true,
+          "message": "**Welcome to the SalesGames team workspace!**\n\n- New here? Ask an Admin for the **Team** role to unlock the rest of the server.\n- Announcements go in #announcements; day-to-day chat in #general.\n- Post a short daily update in #standup.\n- Bugs go in #qa-bugs with steps to reproduce.\n- Commits and PRs show up automatically in #dev-updates.",
+          "pin": true
+        },
+        { "name": "announcements", "topic": "Important updates from leads.", "readOnly": true },
+        { "name": "links", "topic": "Repo, docs, design files and other useful links." }
+      ]
+    },
+    {
+      "name": "Team",
+      "channels": [
+        { "name": "general", "topic": "Day-to-day team chat." },
+        { "name": "standup", "topic": "Daily async standup: yesterday / today / blockers." },
+        { "name": "random", "topic": "Off-topic." }
+      ]
+    },
+    {
+      "name": "SalesGames",
+      "channels": [
+        { "name": "game-dev", "topic": "Building the games: code, mechanics, tech questions." },
+        { "name": "design", "topic": "Art, UI, sound and level ideas." },
+        { "name": "playtesting", "topic": "Playtest builds and feedback.", "extraRoles": ["Guest"] },
+        { "name": "qa-bugs", "topic": "Bug reports: what happened, what you expected, steps to reproduce." },
+        { "name": "dev-updates", "topic": "Automatic feed of GitHub activity.", "readOnly": true, "githubWebhook": true }
+      ]
+    },
+    {
+      "name": "Leads",
+      "roles": ["Lead"],
+      "channels": [
+        { "name": "leads", "topic": "Private planning for leads." }
+      ]
+    },
+    {
+      "name": "Voice",
+      "channels": [
+        { "name": "Huddle", "type": "voice" },
+        { "name": "Meeting Room", "type": "voice" },
+        { "name": "Focus Room", "type": "voice" }
+      ]
+    }
+  ],
+
+  "defaults": {
+    "viewRoles": ["Team", "Lead"],
+    "postRoles": ["Lead"]
+  }
+}

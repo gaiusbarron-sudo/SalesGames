@@ -164,7 +164,7 @@ function roleId(name) {
 }
 
 // Builds permission overwrites for one channel.
-//  - Hidden from @everyone unless `public`.
+//  - Hidden from @everyone unless `public` (set on the channel, its category, or defaults).
 //  - Visible to the category's `roles` (or defaults.viewRoles), plus `extraRoles`.
 //  - `readOnly`: only defaults.postRoles can send messages.
 // Admin has ADMINISTRATOR and sees everything regardless.
@@ -179,10 +179,10 @@ function overwritesFor(category, channel) {
   };
   const view = PERMS.VIEW_CHANNEL;
   const send = PERMS.SEND_MESSAGES | PERMS.SEND_MESSAGES_IN_THREADS | PERMS.CREATE_PUBLIC_THREADS;
-  const viewRoles = [...(category.roles || config.defaults.viewRoles), ...(channel.extraRoles || [])];
-  const postRoles = config.defaults.postRoles || [];
+  const viewRoles = [...(category.roles || config.defaults?.viewRoles || []), ...(channel.extraRoles || [])];
+  const postRoles = config.defaults?.postRoles || [];
 
-  if (channel.public) add(guildId, view);
+  if (channel.public ?? category.public ?? config.defaults?.public ?? false) add(guildId, view);
   else add(guildId, 0n, view);
 
   for (const name of viewRoles) add(roleId(name), view);
@@ -249,7 +249,7 @@ for (const category of config.categories) {
     if (channel.message) {
       const msg = await api("POST", `/channels/${created.id}/messages`, { content: channel.message });
       if (channel.pin) await api("PUT", `/channels/${created.id}/pins/${msg.id}`);
-      console.log(`    posted${channel.pin ? " and pinned" : ""} welcome message`);
+      console.log(`    posted${channel.pin ? " and pinned" : ""} message`);
     }
 
     if (channel.githubWebhook) {

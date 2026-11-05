@@ -1,20 +1,25 @@
 # Discord team workspace setup
 
-`setup.mjs` sets up a Discord server for the SalesGames team based on `server.json`. You can safely run it more than once: anything that already exists (matched by name) is skipped. You need Node 18 or newer; nothing to install.
+`setup.mjs` builds the **BlackCat** Discord server from `server.json`: it creates the channels and posts the text in them automatically. You can safely run it more than once: anything that already exists (matched by name) is skipped. You need Node 18 or newer; nothing to install.
+
+(The older SalesGames team layout is kept in `salesgames.json`; run it with `--config salesgames.json`.)
 
 ## What it creates
 
-**Roles** (highest first): Admin, Lead, Team, Guest
+| Category     | Channels | Access |
+|--------------|----------|--------|
+| Start Here   | #welcome, #rules, #announcements (read-only), #introductions | Everyone |
+| Community    | #general, #opportunities, #ideas | Everyone |
+| Skills       | #sales, #marketing, #tech, #finance | Everyone |
+| Projects     | #project-1 to #project-5 | Everyone |
+| Public Voice | Lounge, Co-Working, Meeting Room | Everyone |
+| Private      | #private-chat, Private Room 1, Private Room 2 | **Authorized** role only |
 
-| Category   | Channels | Who sees it |
-|------------|----------|-------------|
-| Info       | #welcome (read-only, pinned intro), #announcements (Leads post), #links | #welcome: everyone; rest: Team + Lead |
-| Team       | #general, #standup, #random | Team + Lead |
-| SalesGames | #game-dev, #design, #playtesting, #qa-bugs, #dev-updates (GitHub feed, read-only) | Team + Lead (Guests can also see #playtesting) |
-| Leads      | #leads | Lead only |
-| Voice      | Huddle, Meeting Room, Focus Room | Team + Lead |
+Every text channel gets an intro message (the welcome, rules, intro template, opportunity and idea formats, and project cards are pinned).
 
-Admins see and can do everything. New members see only #welcome until someone gives them the **Team** role, so the workspace stays private.
+**Roles:** *Admin* (full control) and *Authorized*. To let someone into the private channels, right-click them → *Roles* → tick **Authorized**. Only Admins (and you, as the server owner) can post in the read-only channels.
+
+To rename a project, change text, or add channels, edit `server.json` and re-run.
 
 ## One-time steps
 
@@ -41,6 +46,6 @@ At the end the script prints a **GitHub webhook URL** for #dev-updates. In GitHu
 
 ## Afterwards
 
-- Give yourself the **Admin** role and teammates **Team** or **Lead** (right-click a member → *Roles*).
+- Give trusted helpers the **Admin** role and private-channel members **Authorized** (right-click a member → *Roles*).
 - Once setup is done you can kick the bot, or remove its Administrator permission.
 - To change the layout, edit `server.json` and re-run. New items get added; existing ones aren't changed or deleted. The welcome message is posted only when #welcome is first created.
