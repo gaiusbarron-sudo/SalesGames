@@ -4,6 +4,7 @@ const DEFAULT_SETTINGS = {
   gmailAccount: 0,          // the /u/N/ number in your Gmail URL
   ignoreEmails: "",         // your own addresses, comma separated, so they are never picked as the client
   fallbackName: "there",    // used for {first_name} when no name is found ("Hi there,")
+  ownName: "",              // your name, so it's never picked as the client's
   templates: [
     { name: "Template 1", subject: "", body: "" },
     { name: "Template 2", subject: "", body: "" },
@@ -22,7 +23,7 @@ async function loadSettings() {
 
 // Runs INSIDE the Ringy page (injected with chrome.scripting), so it must be
 // self-contained: no references to anything outside this function.
-function extractLeadFromPage(ignoreList) {
+function extractLeadFromPage(ignoreList, ownName) {
   const EMAIL_RE = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
   const ignore = (ignoreList || []).map(e => e.toLowerCase());
   const isBad = e => {
@@ -32,6 +33,9 @@ function extractLeadFromPage(ignoreList) {
       /no-?reply|example\.com|sentry|wixpress/.test(l) || /\.(png|jpe?g|gif|svg|webp)$/.test(l);
   };
   const clean = s => (s || "").replace(/\s+/g, " ").trim();
+  // Your own name (from settings), so it's never taken for the client's.
+  const ownWords = clean(ownName).toLowerCase().split(" ").filter(w => w.length > 1);
+  const isOwnName = t => ownWords.length > 0 && clean(t).toLowerCase().split(" ").some(w => ownWords.includes(w));
   const visible = el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
 
   // Label text describing a form field.
@@ -44,9 +48,18 @@ function extractLeadFromPage(ignoreList) {
     }
     const wrap = el.closest("label");
     if (wrap) parts.push(wrap.textContent);
-    // Nearby label in the same small container (common in Vue/React form rows).
-    const box = el.parentElement && el.parentElement.parentElement;
-    if (box && box.textContent.length < 80) parts.push(box.textContent);
+    // Nearest label text in the surrounding form row (Vue/React UIs nest inputs
+    // several wrappers deep, with the label beside a wrapper, not the input).
+    let node = el;
+    for (let i = 0; i < 6 && node.parentElement; i++) {
+      node = node.parentElement;
+      const t = clean(node.textContent);
+      if (t && t.length < 60) { parts.push(t); break; }
+      if (t.length >= 60) break;
+      const prev = node.previousElementSibling;
+      const pt = prev && clean(prev.textContent);
+      if (pt && pt.length < 40) { parts.push(pt); break; }
+    }
     return clean(parts.filter(Boolean).join(" | "));
   }
 
@@ -70,8 +83,9 @@ function extractLeadFromPage(ignoreList) {
   }
 
   // 2) "Label: value" display layouts.
-  const LABELS = [["first", /^first\s*name:?$/i], ["last", /^last\s*name:?$/i],
-                  ["full", /^(full\s*name|name|lead\s*name|contact\s*name):?$/i], ["email", /^e-?mail( address)?:?$/i]];
+  const LABELS = [["first", /^first\s*name\s*\*?:?$/i], ["last", /^last\s*name\s*\*?:?$/i],
+                  ["full", /^(full\s*name|name|lead\s*name|contact\s*name|client\s*name)\s*\*?:?$/i],
+                  ["email", /^(e-?mail|primary e-?mail)( address)?\s*\*?:?$/i]];
   for (const el of document.querySelectorAll("body *")) {
     if (el.children.length > 1 || !visible(el)) continue;
     const t = clean(el.textContent);
@@ -80,8 +94,14 @@ function extractLeadFromPage(ignoreList) {
       if (fields[key] && key !== "email") continue;
       if (!re.test(t)) continue;
       let val = "";
-      const sib = el.nextElementSibling;
-      if (sib) val = clean(sib.value || sib.textContent);
+      // Climb out of wrappers that hold only the label, then read the next cell/column.
+      let node = el;
+      while (node.parentElement && clean(node.parentElement.textContent) === t) node = node.parentElement;
+      const sib = node.nextElementSibling || el.nextElementSibling;
+      if (sib) {
+        const inp = sib.matches("input, textarea") ? sib : sib.querySelector("input, textarea");
+        val = clean(inp ? inp.value : sib.textContent);
+      }
       if (!val && el.parentElement) val = clean(el.parentElement.textContent.replace(el.textContent, ""));
       if (!val || val.length > 80) continue;
       if (key === "email") { const m = val.match(EMAIL_RE); if (m) addEmail(m[0]); }
@@ -101,6 +121,45 @@ function extractLeadFromPage(ignoreList) {
     else if (sel.length < 50) fields.full = sel;
   }
 
+  // 4) No labelled name: look for a name-like heading near the client's email,
+  //    working outward so your own name in the app's top bar isn't picked.
+  if (!fields.first && !fields.full && emails[0]) {
+    const NAME_RE = /^[A-Za-zÀ-ÿ'’.-]{2,}(?: [A-Za-zÀ-ÿ'’.-]{1,}){0,3}$/;
+    const NOT_NAME = /^(lead|leads|contact|contacts|details?|info|information|overview|email|phone|notes?|activity|history|status|tags?|dashboard|settings|inbox|calendar|pipeline|tasks?|call|text|sms|send|save|edit|delete|close|cancel|new|add|search|home|reports?|campaigns?|messages?|unknown|n\/a|none|male|female|active|inactive)$/i;
+    let anchor = [...document.querySelectorAll("input, textarea")].find(i => clean(i.value) === emails[0]);
+    if (!anchor) {
+      const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      for (let n; (n = w.nextNode());) if (n.nodeValue.includes(emails[0])) { anchor = n.parentElement; break; }
+    }
+    let box = anchor;
+    for (let i = 0; box && i < 6 && !fields.full; i++) {
+      box = box.parentElement;
+      // Never search the whole page: that's where the app's own header lives.
+      if (!box || box === document.body || box === document.documentElement || box.matches("main")) break;
+      let best = null, bestSize = 0;
+      for (const el of box.querySelectorAll("*")) {
+        if (el.children.length || !visible(el) || el.closest("nav, header, aside, [role=banner], [role=navigation], button, a[href^='mailto'], option, select")) continue;
+        const t = clean(el.textContent);
+        if (!NAME_RE.test(t) || t.split(" ").some(w => NOT_NAME.test(w)) || isOwnName(t)) continue;
+        if (/\d/.test(t)) continue;
+        const cs = getComputedStyle(el);
+        const size = parseFloat(cs.fontSize) + (parseInt(cs.fontWeight) >= 600 ? 2 : 0);
+        if (size > bestSize) { best = t; bestSize = size; }
+      }
+      // Only trust it if it stands out (bigger or bolder than body text).
+      if (best && bestSize >= 16) fields.full = best;
+    }
+  }
+
+  // 5) Last resort: dana.whitfield@... gives "Dana".
+  if (!fields.first && !fields.full && emails[0]) {
+    const local = emails[0].split("@")[0];
+    const m = local.match(/^([a-z]{2,})[._-]([a-z]{2,})/i);
+    if (m && !/^(info|sales|contact|admin|office|support|hello|team|mail)$/i.test(m[1])) { fields.first = m[1]; fields.last = m[2]; }
+  }
+
+  if (isOwnName(fields.first) && !fields.last) fields.first = "";
+  if (isOwnName(fields.full)) fields.full = "";
   let first = fields.first, last = fields.last, full = fields.full;
   if (!full && (first || last)) full = clean(`${first} ${last}`);
   if (full && !first) { const p = full.split(" "); first = p[0]; last ||= p.slice(1).join(" "); }
@@ -111,7 +170,7 @@ function extractLeadFromPage(ignoreList) {
 async function getLead(tabId, settings) {
   const ignore = settings.ignoreEmails.split(/[,\s]+/).filter(Boolean);
   const [res] = await chrome.scripting.executeScript({
-    target: { tabId }, func: extractLeadFromPage, args: [ignore]
+    target: { tabId }, func: extractLeadFromPage, args: [ignore, settings.ownName || ""]
   });
   return res && res.result;
 }

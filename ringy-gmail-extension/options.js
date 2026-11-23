@@ -16,6 +16,7 @@
   });
   $("fallback").value = s.fallbackName;
   $("ignore").value = s.ignoreEmails;
+  $("ownname").value = s.ownName || "";
   $("acct").value = s.gmailAccount;
 
   $("save").addEventListener("click", async () => {
@@ -30,6 +31,7 @@
       templates,
       fallbackName: $("fallback").value.trim() || "there",
       ignoreEmails: $("ignore").value.trim(),
+      ownName: $("ownname").value.trim(),
       gmailAccount: Number($("acct").value) || 0
     }});
     $("saved").hidden = false;
