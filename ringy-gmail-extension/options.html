@@ -8,7 +8,8 @@
   h1 { font-size: 20px; } h2 { font-size: 15px; margin-top: 28px; }
   label { display: block; font-size: 12px; color: #5f6368; margin: 10px 0 4px; }
   input, textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #dadce0; border-radius: 4px; font: inherit; }
-  textarea { min-height: 160px; }
+  .editor { min-height: 200px; max-height: 480px; overflow: auto; padding: 10px; border: 1px solid #dadce0; border-radius: 4px; background: #fff; }
+  .editor:focus { outline: 2px solid #1a73e8; }
   fieldset { border: 1px solid #dadce0; border-radius: 6px; padding: 12px 16px; margin: 14px 0; }
   legend { font-weight: 600; padding: 0 6px; }
   code { background: #f1f3f4; padding: 1px 4px; border-radius: 3px; }
@@ -27,9 +28,11 @@
 
   <h2>Templates</h2>
   <p class="note">
-    Paste the subject and body of your Gmail templates here (Gmail doesn't let other tools read its templates).
-    You can use <code>{first_name}</code>, <code>{last_name}</code>, <code>{full_name}</code> and <code>{email}</code>
-    and they'll be filled in from the Ringy lead. Your Gmail signature is still added by Gmail.
+    Open a sent email that looks right, select from "Hello" down to "All the best,", copy it, and paste it into a
+    body box. Bold, highlights and links are kept. <b>Don't paste the signature</b>: Gmail adds your signature
+    (with your photo) to every draft by itself.<br><br>
+    You can type <code>{first_name}</code>, <code>{last_name}</code>, <code>{full_name}</code> and <code>{email}</code>
+    and they'll be filled in from the Ringy lead, for example <code>Hello {first_name},</code>
   </p>
   <div id="templates"></div>
 

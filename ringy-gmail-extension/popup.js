@@ -18,7 +18,7 @@
   async function send(template) {
     const edited = Object.assign({}, lead, { firstName: $("name").value.trim(), email: $("email").value.trim() });
     if (edited.firstName !== lead.firstName) { edited.fullName = edited.firstName; edited.lastName = ""; }
-    await chrome.tabs.create({ url: gmailComposeUrl(edited, template, settings), index: tab.index + 1 });
+    await openDraft(edited, template, settings, tab.index + 1);
     window.close();
   }
 

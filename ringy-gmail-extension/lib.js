@@ -120,21 +120,43 @@ function titleCase(s) {
   return (s || "").toLowerCase().replace(/\b[a-z]/g, c => c.toUpperCase());
 }
 
-function fillPlaceholders(text, lead, settings) {
-  const first = titleCase(lead.firstName) || settings.fallbackName;
-  return (text || "")
-    .replace(/\{first_name\}/gi, first)
-    .replace(/\{last_name\}/gi, titleCase(lead.lastName))
-    .replace(/\{full_name\}/gi, titleCase(lead.fullName) || first)
-    .replace(/\{email\}/gi, lead.email || "");
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+function fillPlaceholders(text, lead, settings, html) {
+  const first = titleCase(lead.firstName) || settings.fallbackName;
+  const v = {
+    first_name: first,
+    last_name: titleCase(lead.lastName),
+    full_name: titleCase(lead.fullName) || first,
+    email: lead.email || ""
+  };
+  return (text || "").replace(/\{(first_name|last_name|full_name|email)\}/gi,
+    (_, k) => html ? escapeHtml(v[k.toLowerCase()]) : v[k.toLowerCase()]);
+}
+
+// Templates saved before formatting was supported are plain text.
+function templateHtml(body) {
+  body = body || "";
+  if (/<[a-z][\s\S]*>/i.test(body)) return body;
+  return escapeHtml(body).replace(/\n/g, "<br>");
+}
+
+// The address and subject go in the Gmail link; the formatted body can't
+// (links only carry plain text), so gmail.js pastes it into the draft.
 function gmailComposeUrl(lead, template, settings) {
   const p = new URLSearchParams({ view: "cm", fs: "1" });
   if (lead.email) p.set("to", lead.email);
-  if (template) {
-    p.set("su", fillPlaceholders(template.subject, lead, settings));
-    p.set("body", fillPlaceholders(template.body, lead, settings));
-  }
+  if (template && template.subject) p.set("su", fillPlaceholders(template.subject, lead, settings, false));
   return `https://mail.google.com/mail/u/${Number(settings.gmailAccount) || 0}/?${p.toString()}`;
+}
+
+async function openDraft(lead, template, settings, index) {
+  const tab = await chrome.tabs.create({ url: gmailComposeUrl(lead, template, settings), index });
+  if (template && (template.body || "").trim()) {
+    const html = fillPlaceholders(templateHtml(template.body), lead, settings, true);
+    await chrome.storage.session.set({ ["pending-" + tab.id]: { html, at: Date.now() } });
+  }
+  return tab;
 }
