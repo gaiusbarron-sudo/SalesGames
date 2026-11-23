@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Ringy to Gmail settings</title>
+<style>
+  body { font: 14px system-ui, sans-serif; max-width: 720px; margin: 24px auto; padding: 0 16px; color: #202124; }
+  h1 { font-size: 20px; } h2 { font-size: 15px; margin-top: 28px; }
+  label { display: block; font-size: 12px; color: #5f6368; margin: 10px 0 4px; }
+  input, textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #dadce0; border-radius: 4px; font: inherit; }
+  textarea { min-height: 160px; }
+  fieldset { border: 1px solid #dadce0; border-radius: 6px; padding: 12px 16px; margin: 14px 0; }
+  legend { font-weight: 600; padding: 0 6px; }
+  code { background: #f1f3f4; padding: 1px 4px; border-radius: 3px; }
+  button { padding: 8px 18px; background: #1a73e8; color: #fff; border: 0; border-radius: 4px; font: inherit; cursor: pointer; }
+  #saved { margin-left: 10px; color: #188038; }
+  .note { color: #5f6368; font-size: 13px; }
+</style>
+</head>
+<body>
+  <h1>Ringy to Gmail</h1>
+  <p class="note">
+    Shortcuts: <b>Alt+Shift+E</b> shows the lead and a template picker. <b>Alt+Shift+1</b> and <b>Alt+Shift+2</b>
+    open template 1 or 2 straight away. Template 3 has no key until you set one;
+    <a href="#" id="shortcuts">change shortcuts here</a>.
+  </p>
+
+  <h2>Templates</h2>
+  <p class="note">
+    Paste the subject and body of your Gmail templates here (Gmail doesn't let other tools read its templates).
+    You can use <code>{first_name}</code>, <code>{last_name}</code>, <code>{full_name}</code> and <code>{email}</code>
+    and they'll be filled in from the Ringy lead. Your Gmail signature is still added by Gmail.
+  </p>
+  <div id="templates"></div>
+
+  <h2>Settings</h2>
+  <label for="fallback">If no first name is found, use</label>
+  <input id="fallback" placeholder="there">
+  <label for="ignore">Your own email addresses (comma separated) so they're never picked as the client's</label>
+  <input id="ignore" placeholder="you@gmail.com">
+  <label for="acct">Gmail account number (the N in mail.google.com/mail/u/N/ when you're in the right inbox)</label>
+  <input id="acct" type="number" min="0" value="0">
+
+  <p><button id="save">Save</button><span id="saved" hidden>Saved</span></p>
+  <script src="lib.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

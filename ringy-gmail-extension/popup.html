@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font: 13px system-ui, sans-serif; width: 300px; margin: 0; padding: 12px; color: #202124; }
+  h1 { font-size: 14px; margin: 0 0 10px; }
+  label { display: block; font-size: 11px; color: #5f6368; margin-top: 8px; }
+  input { width: 100%; box-sizing: border-box; padding: 6px; border: 1px solid #dadce0; border-radius: 4px; font: inherit; }
+  .warn { color: #d93025; font-size: 12px; margin-top: 6px; }
+  .btns { margin-top: 12px; display: grid; gap: 6px; }
+  button { padding: 8px; border: 1px solid #dadce0; border-radius: 4px; background: #fff; text-align: left; cursor: pointer; font: inherit; }
+  button:hover, button:focus { background: #e8f0fe; border-color: #1a73e8; outline: none; }
+  kbd { float: right; color: #5f6368; }
+  .foot { margin-top: 10px; font-size: 11px; }
+  a { color: #1a73e8; }
+</style>
+</head>
+<body>
+  <h1>Email this lead</h1>
+  <label for="name">First name</label>
+  <input id="name">
+  <label for="email">Email</label>
+  <input id="email" list="emails">
+  <datalist id="emails"></datalist>
+  <div id="warn" class="warn" hidden>No email found on this page. Type it in, or highlight it on the page and try again.</div>
+  <div class="btns" id="btns"></div>
+  <div class="foot"><a href="#" id="opts">Edit templates and settings</a></div>
+  <script src="lib.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
